@@ -1,0 +1,7 @@
+{
+    "board": "adafruit:samd:adafruit_feather_m0",
+    "port": "/dev/tty.usbmodem14101",
+    "programmer": "arduino:atmel_ice",
+    "sketch": "HexaLigths.ino",
+    "configuration": "opt=small,usbstack=arduino,debug=off"
+}
