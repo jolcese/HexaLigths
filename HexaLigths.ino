@@ -58,7 +58,7 @@ uint8_t g_pattern_parameter_4;
 boolean g_power = true;
 boolean g_repeat = true;
 boolean g_cycle = true;
-int16_t g_brigthness = BRIGTHNESS_FULL;
+int16_t g_brightness = BRIGTHNESS_FULL;
 
 // *****************************************
 // Modules
@@ -87,8 +87,8 @@ void setup() {
   //FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(0xFFD0F0);
   FastLED.addLeds<LED_TYPE,STRIP_DATA_PIN,COLOR_ORDER>(g_leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   //FastLED.setMaxPowerInVoltsAndMilliamps( 5, MAX_POWER_MILLIAMPS);
-  FastLED.setBrightness( g_brigthness );
-  FastLED.setDither(DISABLE_DITHER); 
+  FastLED.setBrightness( g_brightness );
+  FastLED.setDither(BINARY_DITHER); 
 
   g_pattern_index = 0;
   g_pattern_delayloop = g_patterns[g_pattern_index].delayloop;
@@ -177,6 +177,20 @@ void setup() {
     g_webServer.send(200, "text/plain", String(g_power));
   });
 
+  g_webServer.on("/brightness", HTTP_POST, []() {
+    Serial.println("/brightness(POST)");
+    String value = g_webServer.arg("value");
+    setBrightness(value);
+    g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
+    g_webServer.send(200, "text/plain", String(g_brightness));
+  });
+
+  g_webServer.on("/delay", HTTP_POST, []() {
+    String value = g_webServer.arg("value");
+    setDelay(value);
+    g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
+    g_webServer.send(200, "text/plain", String(g_pattern_delayloop));
+  });
 
   g_webServer.serveStatic("/", SPIFFS, "/", "max-age=86400");
 
@@ -202,8 +216,8 @@ void setup() {
     g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
   });
 
-  //MDNS.begin(nameChar);
-  //MDNS.setHostname(nameChar);
+  // MDNS.begin(nameChar);
+  // MDNS.setHostname(nameChar);
 
   g_webServer.begin();
   Serial.println("HTTP web server started");
@@ -295,25 +309,25 @@ void loop() {
       // Decrease Brigthness
       case 'A':
       case 'a':
-        g_brigthness = FastLED.getBrightness() * (1 - BRIGHTNESS_STEP);
-        if (g_brigthness < 0) g_brigthness = 0;
+        g_brightness = FastLED.getBrightness() * (1 - BRIGHTNESS_STEP);
+        if (g_brightness < 0) g_brightness = 0;
         Serial.print("Brightness = ");
-        Serial.println(g_brigthness);
-        FastLED.setBrightness( (uint8_t) g_brigthness );
+        Serial.println(g_brightness);
+        FastLED.setBrightness( (uint8_t) g_brightness );
         break;
 
       // Increase Brightness
       case 'S':
       case 's':
-        if ((uint8_t)g_brigthness == (uint8_t)(FastLED.getBrightness() * (1 + BRIGHTNESS_STEP))) {
-          g_brigthness++;
+        if ((uint8_t)g_brightness == (uint8_t)(FastLED.getBrightness() * (1 + BRIGHTNESS_STEP))) {
+          g_brightness++;
         } else {
-          g_brigthness = FastLED.getBrightness() * (1 + BRIGHTNESS_STEP);          
+          g_brightness = FastLED.getBrightness() * (1 + BRIGHTNESS_STEP);          
         }
-        if (g_brigthness > BRIGTHNESS_FULL) g_brigthness = BRIGTHNESS_FULL;
+        if (g_brightness > BRIGTHNESS_FULL) g_brightness = BRIGTHNESS_FULL;
         Serial.print("Brightness = ");
-        Serial.println(g_brigthness);
-        FastLED.setBrightness( (uint8_t) g_brigthness );
+        Serial.println(g_brightness);
+        FastLED.setBrightness( (uint8_t) g_brightness );
         break;
 
       // Decrease Speed
@@ -358,16 +372,23 @@ void loop() {
   while (WiFi.status() != WL_CONNECTED)
   {
     setupWifiManager();
+    // MDNS.begin(nameChar);
+    // MDNS.setHostname(nameChar);
   }
 
   g_wifiManager.process();
   g_webServer.handleClient();
+  // MDNS.update();
 
    if (g_power == false) {
     fill_solid(g_leds, NUM_LEDS, CRGB::Black);
-    FastLED.show();
-    delay(1000 / FRAMES_PER_SECOND);
+    // FIX
+    FastLED.delay(1000 / FRAMES_PER_SECOND);
+
   } else {
-      g_patterns[g_pattern_index].function();
+    g_patterns[g_pattern_index].function();
+    FastLED.delay(g_pattern_delayloop);
   }
+  // FastLED.delay(1000 / FRAMES_PER_SECOND);
+
 }

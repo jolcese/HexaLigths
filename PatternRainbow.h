@@ -21,19 +21,26 @@ void rotating_rainbow()
     n_leds = NUM_LEDS;    
   }
 
-  if (g_cycle == true) {
-    rotateLocal++;
-    if (rotateLocal > n_leds - 1) rotateLocal = 0;
-  }
-  
-  for(uint8_t hex = 0; hex < n_tiles; hex++) { 
-    for(uint8_t dot = 0; dot < n_leds; dot++) { 
+  // EVERY_N_MILLISECONDS( g_pattern_delayloop ) {
 
-      uint16_t idx = dot + rotateLocal;
-      if (idx > n_leds - 1) idx -= n_leds;
-      g_leds[dot + hex * n_leds] = CHSV((gfHueDelta * idx), 255, 255);
+    Serial.print("g_pattern_delayloop = ");
+    Serial.println(g_pattern_delayloop);
+
+    if (g_cycle == true) {
+      rotateLocal++;
+      if (rotateLocal > n_leds - 1) rotateLocal = 0;
     }
-  }
-  FastLED.show();
-  delay(g_pattern_delayloop);
+    
+    for(uint8_t hex = 0; hex < n_tiles; hex++) { 
+      for(uint8_t dot = 0; dot < n_leds; dot++) { 
+
+        uint16_t idx = dot + rotateLocal;
+        if (idx > n_leds - 1) idx -= n_leds;
+        g_leds[dot + hex * n_leds] = CHSV((gfHueDelta * idx), 255, 255);
+      }
+    }
+  // }
+
+  // FastLED.show();
+  // delay(g_pattern_delayloop);
 }

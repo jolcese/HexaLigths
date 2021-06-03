@@ -1,5 +1,11 @@
-// TODO
-// rainbow all around
-// eeprom
-// wifi
-// autoplay
+# TODO
+* simple.htm 
+  * change icon
+  * add websocket
+  * handle delaypostvalue
+* MDNS
+* FRAMES_PER_SECOND
+* rainbow all around
+* eeprom
+* wifi
+* autoplay

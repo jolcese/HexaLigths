@@ -30,16 +30,18 @@ String getPower() {
   return String(g_power);
 }
 
-//String setBrightness(String value) {
-//  brightness = value.toInt();
-//  if(brightness < 0) brightness = 0;
-//  else if (brightness > 255) brightness = 255;
-//  return String(brightness);
-//}
+String setBrightness(String value) {
+  g_brightness = value.toInt();
+  if(g_brightness < 0) g_brightness = 0;
+  else if (g_brightness > 255) g_brightness = 255;
+  FastLED.setBrightness( g_brightness );
 
-// String getBrightness() {
-//   return String(brightness);
-// }
+  return String(g_brightness);
+}
+
+String getBrightness() {
+  return String(g_brightness);
+}
 
 void setPattern(uint8_t value)
 {
@@ -121,9 +123,17 @@ String getPatterns() {
 //   return String(sparking);
 // }
 
-// String getSpeed() {
-//   return String(speed);
-// }
+String getDelay() {
+  return String(g_pattern_delayloop);
+}
+
+String setDelay(String value) {
+  g_pattern_delayloop = value.toInt();
+  if(g_pattern_delayloop < 0) g_brightness = 0;
+  else if (g_pattern_delayloop > 255) g_pattern_delayloop = 255;
+  return String(g_brightness);
+}
+
 
 // String getTwinkleSpeed() {
 //   return String(twinkleSpeed);
@@ -274,10 +284,10 @@ FieldList fields = {
     {"name", "Name", LabelFieldType, 0, 0, getName},
 
     {"power", "Power", BooleanFieldType, 0, 1, getPower},
-    // {"brightness", "Brightness", NumberFieldType, 1, 255, getBrightness},
+    {"brightness", "Brightness", NumberFieldType, 1, 255, getBrightness},
     {"pattern", "Pattern", SelectFieldType, 0, PATTERNS_TOTAL, getPattern, getPatterns},
     // {"palette", "Palette", SelectFieldType, 0, paletteCount, getPalette, getPalettes},
-    // {"speed", "Speed", NumberFieldType, 1, 255, getSpeed},
+    {"delay", "Delay", NumberFieldType, 1, 255, getDelay},
 
     // {"autoplaySection", "Autoplay", SectionFieldType},
     // {"autoplay", "Autoplay", BooleanFieldType, 0, 1, getAutoplay},

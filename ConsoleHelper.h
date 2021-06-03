@@ -43,7 +43,7 @@ void print_led_status() {
   Serial.print(" - ");
   Serial.println(g_patterns[g_pattern_index].name);
   Serial.print("Brightness = ");
-  Serial.println(g_brigthness);
+  Serial.println(g_brightness);
   Serial.print("Delay = ");
   Serial.println(g_pattern_delayloop);
   Serial.print("Pattern Parameter 1 = ");

@@ -17,13 +17,14 @@ void rainbow()
   // FastLED's built-in rainbow generator
   fill_rainbow( g_leds, NUM_LEDS, gHue, 7);
 
-  FastLED.show();  
-  // insert a delay to keep the framerate modest
-  FastLED.delay(g_pattern_delayloop); 
+  // FastLED.show();  
+  // // insert a delay to keep the framerate modest
+  // FastLED.delay(g_pattern_delayloop); 
 
   // do some periodic updates
-  EVERY_N_MILLISECONDS( 20 ) { gHue++; } // slowly cycle the "base color" through the rainbow
-
+  // EVERY_N_MILLISECONDS( g_pattern_delayloop ) { gHue++; } // slowly cycle the "base color" through the rainbow
+  gHue++; 
+ 
 }
 
 void addGlitter( fract8 chanceOfGlitter) 
@@ -39,11 +40,12 @@ void rainbowWithGlitter()
   fill_rainbow( g_leds, NUM_LEDS, gHue, 7);
   addGlitter(80);
 
-  FastLED.show();  
-  // insert a delay to keep the framerate modest
-  FastLED.delay(g_pattern_delayloop); 
+  // FastLED.show();  
+  // // insert a delay to keep the framerate modest
+  // FastLED.delay(g_pattern_delayloop); 
   // do some periodic updates
-  EVERY_N_MILLISECONDS( 20 ) { gHue++; } // slowly cycle the "base color" through the rainbow
+  // EVERY_N_MILLISECONDS( g_pattern_delayloop ) { gHue++; } // slowly cycle the "base color" through the rainbow
+  gHue++; 
 }
 
 
@@ -63,7 +65,8 @@ void confetti()
   FastLED.delay(g_pattern_delayloop); 
 
   // do some periodic updates
-  EVERY_N_MILLISECONDS( 20 ) { gHue++; } // slowly cycle the "base color" through the rainbow
+  // EVERY_N_MILLISECONDS( g_pattern_delayloop ) { gHue++; } // slowly cycle the "base color" through the rainbow
+  gHue++; 
 
 }
 
@@ -79,7 +82,8 @@ void sinelon()
   FastLED.delay(g_pattern_delayloop); 
 
   // do some periodic updates
-  EVERY_N_MILLISECONDS( 20 ) { gHue++; } // slowly cycle the "base color" through the rainbow
+  // EVERY_N_MILLISECONDS( g_pattern_delayloop ) { gHue++; } // slowly cycle the "base color" through the rainbow
+  gHue++; 
 
 }
 
@@ -96,7 +100,8 @@ void juggle() {
   FastLED.delay(g_pattern_delayloop); 
 
   // do some periodic updates
-  EVERY_N_MILLISECONDS( 20 ) { gHue++; } // slowly cycle the "base color" through the rainbow
+  // EVERY_N_MILLISECONDS( g_pattern_delayloop ) { gHue++; } // slowly cycle the "base color" through the rainbow
+  gHue++; 
 }
 
 void bpm()
@@ -108,10 +113,11 @@ void bpm()
   for( int i = 0; i < NUM_LEDS; i++) { //9948
     g_leds[i] = ColorFromPalette(palette, gHue+(i*2), beat-gHue+(i*10));
   }
-  FastLED.show();  
-  // insert a delay to keep the framerate modest
-  FastLED.delay(g_pattern_delayloop); 
+  // FastLED.show();  
+  // // insert a delay to keep the framerate modest
+  // FastLED.delay(g_pattern_delayloop); 
 
   // do some periodic updates
-  EVERY_N_MILLISECONDS( 20 ) { gHue++; } // slowly cycle the "base color" through the rainbow
+  // EVERY_N_MILLISECONDS( g_pattern_delayloop ) { gHue++; } // slowly cycle the "base color" through the rainbow
+  gHue++; 
 }

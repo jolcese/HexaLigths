@@ -23,12 +23,15 @@ void color_palette()
 
   ChangePalette(g_pattern_parameter_1);
  
-  if (g_cycle == true) startIndex++; /* motion speed */
   
-  FillLEDsFromPaletteColors(startIndex);
-  
-  FastLED.show();
-  FastLED.delay(g_pattern_delayloop);
+  // slowly cycle the "base color" through the rainbow
+  // EVERY_N_MILLISECONDS( g_pattern_delayloop ) {
+    if (g_cycle == true) startIndex++; /* motion speed */
+    FillLEDsFromPaletteColors(startIndex);
+  // } 
+
+  // FastLED.show();
+  // FastLED.delay(g_pattern_delayloop);
  }
 
 void FillLEDsFromPaletteColors( uint8_t colorIndex)

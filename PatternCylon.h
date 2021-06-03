@@ -16,21 +16,23 @@ void cylon() {
   static uint8_t localHue = 0;
   static uint8_t localIndex = 0;
    
-  fadeall();
-  // Set the index led to localHue
-  g_leds[around[localIndex]] = CHSV(localHue, 255, 255);
-  // Show the leds
-  FastLED.show(); 
+  // EVERY_N_MILLISECONDS( g_pattern_delayloop ) {
+    fadeall();
+    // Set the index led to localHue
+    g_leds[around[localIndex]] = CHSV(localHue, 255, 255);
+    // Show the leds
+    FastLED.show(); 
 
-  if (g_cycle) localHue++;
-  
-  localIndex++;
-  if (localIndex == EDGE_LEDS) {
-    localIndex = 0;
-  }
+    if (g_cycle) localHue++;
+    
+    localIndex++;
+    if (localIndex == EDGE_LEDS) {
+      localIndex = 0;
+    }
+  // }
 
   // Wait a little bit before we loop around and do it again
-  delay(g_pattern_delayloop);
+  // delay(g_pattern_delayloop);
 
 }
 

@@ -18,7 +18,7 @@ void pacifica_deepen_colors();
 
 void pacifica()
 {
-  EVERY_N_MILLISECONDS( g_pattern_delayloop ) {
+  // EVERY_N_MILLISECONDS( g_pattern_delayloop ) {
     // Increment the four "color index start" counters, one for each wave layer.
     // Each is incremented at a different speed, and the speeds vary over time.
     static uint16_t sCIStart1, sCIStart2, sCIStart3, sCIStart4;
@@ -50,8 +50,8 @@ void pacifica()
   
     // Deepen the blues and greens a bit
     pacifica_deepen_colors();
-    FastLED.show();
-  }
+    // FastLED.show();
+  // }
 }
 
 // Add one layer of waves into the led array
