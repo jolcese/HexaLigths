@@ -51,7 +51,7 @@ void print_led_status() {
   Serial.print("Pattern Parameter 2 = ");
   Serial.println(g_pattern_parameter_2);
   Serial.print("Repeat = ");
-  Serial.println(g_repeat);
+  Serial.println(g_identical_tiles);
   Serial.print("Cycle = ");
   Serial.println(g_cycle);
   Serial.print("FPS = ");

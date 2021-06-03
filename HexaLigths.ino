@@ -56,7 +56,7 @@ uint8_t g_pattern_parameter_2;
 uint8_t g_pattern_parameter_3;
 uint8_t g_pattern_parameter_4;
 boolean g_power = true;
-boolean g_repeat = true;
+boolean g_identical_tiles = true;
 boolean g_cycle = true;
 int16_t g_brightness = BRIGTHNESS_FULL;
 
@@ -96,6 +96,7 @@ void setup() {
   g_pattern_parameter_2 = g_patterns[g_pattern_index].parameter2;
   g_pattern_parameter_3 = 0;
   g_pattern_parameter_4 = 0;
+  
   Serial.begin(115200);
 
   print_system_status();
@@ -153,14 +154,6 @@ void setup() {
     g_webServer.send(200, "application/json", json);
   });
 
-  g_webServer.on("/pattern", HTTP_POST, []() {
-    Serial.println("/pattern(POST)");
-    String value = g_webServer.arg("value");
-    setPattern(value.toInt());
-    g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
-    g_webServer.send(200, "text/plain", String(g_pattern_index));
-  });
-
   g_webServer.on("/patternByName", HTTP_POST, []() {
     Serial.println("/patternByName(POST)");
     String value = g_webServer.arg("value");
@@ -169,27 +162,12 @@ void setup() {
     g_webServer.send(200, "text/plain", String(g_pattern_index));
   });
 
-  g_webServer.on("/power", HTTP_POST, []() {
-    Serial.println("/power(POST)");
+  g_webServer.on("/fieldValue", HTTP_POST, []() {
+    String name = g_webServer.arg("name");
     String value = g_webServer.arg("value");
-    setPower(value);
+    String newValue = setFieldValue(name, value, fields, FIELD_COUNT);
     g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
-    g_webServer.send(200, "text/plain", String(g_power));
-  });
-
-  g_webServer.on("/brightness", HTTP_POST, []() {
-    Serial.println("/brightness(POST)");
-    String value = g_webServer.arg("value");
-    setBrightness(value);
-    g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
-    g_webServer.send(200, "text/plain", String(g_brightness));
-  });
-
-  g_webServer.on("/delay", HTTP_POST, []() {
-    String value = g_webServer.arg("value");
-    setDelay(value);
-    g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
-    g_webServer.send(200, "text/plain", String(g_pattern_delayloop));
+    g_webServer.send(200, "text/json", newValue);
   });
 
   g_webServer.serveStatic("/", SPIFFS, "/", "max-age=86400");
@@ -253,11 +231,11 @@ void loop() {
       // Repeat pattern on every Tile
       case 'R':
       case 'r':
-        if (g_repeat == true) {
-          g_repeat = false;
+        if (g_identical_tiles == true) {
+          g_identical_tiles = false;
           Serial.println("Pattern will be done across all LEDS");
         } else {
-          g_repeat = true;
+          g_identical_tiles = true;
           Serial.println("Pattern will be repeated on every Tile");
         }
         break;

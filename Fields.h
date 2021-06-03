@@ -19,6 +19,10 @@
 // uint8_t power = 1;
 // uint8_t brightness = brightnessMap[brightnessIndex];
 
+// *****************************************
+// Power
+// *****************************************
+
 String setPower(String value) {
  g_power = value.toInt();
 //  if(g_power < 0) g_power = 0;
@@ -29,6 +33,40 @@ String setPower(String value) {
 String getPower() {
   return String(g_power);
 }
+
+// *****************************************
+// Identical Tiles
+// *****************************************
+
+String setIdenticalTiles(String value) {
+ g_identical_tiles = value.toInt();
+//  if(g_power < 0) g_power = 0;
+//  else if (power > 1) power = 1;
+ return String(g_identical_tiles);
+}
+
+String getIdenticalTiles() {
+  return String(g_identical_tiles);
+}
+
+// *****************************************
+// Cycle
+// *****************************************
+
+String setCycle(String value) {
+ g_cycle = value.toInt();
+//  if(g_power < 0) g_power = 0;
+//  else if (power > 1) power = 1;
+ return String(g_cycle);
+}
+
+String getCycle() {
+  return String(g_cycle);
+}
+
+// *****************************************
+// Brightness
+// *****************************************
 
 String setBrightness(String value) {
   g_brightness = value.toInt();
@@ -43,12 +81,17 @@ String getBrightness() {
   return String(g_brightness);
 }
 
-void setPattern(uint8_t value)
-{
-  if (value >= PATTERNS_TOTAL)
-    value = PATTERNS_TOTAL - 1;
+// *****************************************
+// Pattern
+// *****************************************
 
-  g_pattern_index = value;
+String setPattern(String value)
+{
+  g_pattern_index = value.toInt();;
+
+  if (g_pattern_index >= PATTERNS_TOTAL)
+    g_pattern_index = PATTERNS_TOTAL - 1;
+
   g_pattern_delayloop = g_patterns[g_pattern_index].delayloop;
   g_pattern_parameter_1 = g_patterns[g_pattern_index].parameter1;
   g_pattern_parameter_2 = g_patterns[g_pattern_index].parameter2;
@@ -58,21 +101,12 @@ void setPattern(uint8_t value)
   // }
 
   // broadcastInt("pattern", currentPatternIndex);
-}
+  return String(g_pattern_index);
 
+}
 
 String getPattern() {
   return String(g_pattern_index);
-}
-
-void setPatternByName(String name)
-{
-  for (uint8_t i = 0; i < PATTERNS_TOTAL; i++) {
-    if (String(g_patterns[i].name) == name) {
-      setPattern(i);
-      break;
-    }
-  }
 }
 
 String getPatterns() {
@@ -86,6 +120,45 @@ String getPatterns() {
 
   return json;
 }
+
+// *****************************************
+// PatternByName
+// *****************************************
+
+void setPatternByName(String name)
+{
+  for (uint8_t i = 0; i < PATTERNS_TOTAL; i++) {
+    if (String(g_patterns[i].name) == name) {
+      setPattern(String(i));
+      break;
+    }
+  }
+}
+
+// *****************************************
+// Delay
+// *****************************************
+
+String getDelay() {
+  return String(g_pattern_delayloop);
+}
+
+String setDelay(String value) {
+  g_pattern_delayloop = value.toInt();
+  if(g_pattern_delayloop < 0) g_brightness = 0;
+  else if (g_pattern_delayloop > 255) g_pattern_delayloop = 255;
+  return String(g_brightness);
+}
+
+// *****************************************
+// HexaLight Name
+// *****************************************
+
+String getName() {
+  return g_nameString;
+}
+
+
 
 // String getPalette() {
 //   return String(currentPaletteIndex);
@@ -123,16 +196,7 @@ String getPatterns() {
 //   return String(sparking);
 // }
 
-String getDelay() {
-  return String(g_pattern_delayloop);
-}
 
-String setDelay(String value) {
-  g_pattern_delayloop = value.toInt();
-  if(g_pattern_delayloop < 0) g_brightness = 0;
-  else if (g_pattern_delayloop > 255) g_pattern_delayloop = 255;
-  return String(g_brightness);
-}
 
 
 // String getTwinkleSpeed() {
@@ -147,9 +211,6 @@ String setDelay(String value) {
 //   return String(coolLikeIncandescent);
 // }
 
-String getName() {
-  return g_nameString;
-}
 
 // // Pride Playground fields
 
@@ -283,11 +344,13 @@ String getName() {
 FieldList fields = {
     {"name", "Name", LabelFieldType, 0, 0, getName},
 
-    {"power", "Power", BooleanFieldType, 0, 1, getPower},
-    {"brightness", "Brightness", NumberFieldType, 1, 255, getBrightness},
-    {"pattern", "Pattern", SelectFieldType, 0, PATTERNS_TOTAL, getPattern, getPatterns},
+    {"power", "Power", BooleanFieldType, 0, 1, getPower, NULL, setPower},
+    {"pattern", "Pattern", SelectFieldType, 0, PATTERNS_TOTAL, getPattern, getPatterns, setPattern},
+    {"brightness", "Brightness", NumberFieldType, 1, 255, getBrightness, NULL, setBrightness},
+    {"delay", "Delay", NumberFieldType, 1, 255, getDelay, NULL, setDelay},
     // {"palette", "Palette", SelectFieldType, 0, paletteCount, getPalette, getPalettes},
-    {"delay", "Delay", NumberFieldType, 1, 255, getDelay},
+    {"identicalTiles", "Identical Tiles", BooleanFieldType, 0, 1, getIdenticalTiles, NULL, setIdenticalTiles},
+    {"cycle", "Cycle", BooleanFieldType, 0, 1, getCycle, NULL, setCycle},
 
     // {"autoplaySection", "Autoplay", SectionFieldType},
     // {"autoplay", "Autoplay", BooleanFieldType, 0, 1, getAutoplay},

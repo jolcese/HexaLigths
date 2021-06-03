@@ -42,7 +42,7 @@ void FillLEDsFromPaletteColors( uint8_t colorIndex)
   uint8_t cidx;
   float gfHueDelta;
 
-  if (g_repeat == true) {
+  if (g_identical_tiles == true) {
     n_tiles = NUM_HEX;
     n_leds = NUM_LEDS_PER_HEX;
     gfHueDelta = (float) 255 / (NUM_LEDS_PER_HEX - 1);

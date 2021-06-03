@@ -9,7 +9,7 @@ void rotating_rainbow()
   float gfHueDelta;
   static uint8_t rotateLocal = 0;
   
-  if (g_repeat == true) {
+  if (g_identical_tiles == true) {
     n_tiles = NUM_HEX;
     gfHueDelta = (float) 255 / (NUM_LEDS_PER_HEX - 1);
     n_leds = NUM_LEDS_PER_HEX;
