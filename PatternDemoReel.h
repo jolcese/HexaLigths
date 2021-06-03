@@ -9,7 +9,7 @@
 // typedef void (*SimplePatternList[])();
 // SimplePatternList gPatterns = { rainbow, rainbowWithGlitter, confetti, sinelon, juggle, bpm };
 
- uint8_t gHue = 0; // rotating "base color" used by many of the patterns
+uint8_t gHue = 0; // rotating "base color" used by many of the patterns
 // uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 
 void rainbow() 
@@ -26,6 +26,12 @@ void rainbow()
 
 }
 
+void addGlitter( fract8 chanceOfGlitter) 
+{
+  if( random8() < chanceOfGlitter) {
+    g_leds[ random16(NUM_LEDS) ] += CRGB::White;
+  }
+}
 void rainbowWithGlitter() 
 {
   // built-in FastLED rainbow, plus some random sparkly glitter
@@ -40,12 +46,7 @@ void rainbowWithGlitter()
   EVERY_N_MILLISECONDS( 20 ) { gHue++; } // slowly cycle the "base color" through the rainbow
 }
 
-void addGlitter( fract8 chanceOfGlitter) 
-{
-  if( random8() < chanceOfGlitter) {
-    g_leds[ random16(NUM_LEDS) ] += CRGB::White;
-  }
-}
+
 
 void confetti() 
 {

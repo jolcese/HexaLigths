@@ -1,0 +1,23 @@
+body { padding-bottom: 70px; }
+
+.btn-group-custom .btn {
+  border-right-width: 0;
+}
+
+.btn-group-custom .btn:hover {
+  border-right-width: 1px;
+}
+
+.btn-group-custom .btn:hover + .btn {
+  border-left-width: 0;
+}
+
+#ButtonSearch {
+  border-left-width: 1px;
+  border-right-width: 0;
+  margin-left: 16px;
+}
+
+#ButtonExport {
+  border-right-width: 1px;
+}

@@ -3,6 +3,15 @@
 // 2 - Color Palette
 // *****************************************
 
+extern uint8_t g_pattern_parameter_1;
+
+void ChangePalette(uint8_t param);
+void FillLEDsFromPaletteColors( uint8_t colorIndex);
+void SetupPurpleAndGreenPalette();
+void SetupTotallyRandomPalette();
+void SetupBlackAndWhiteStripedPalette();
+
+
 CRGBPalette16 currentPalette = RainbowColors_p;
 TBlendType currentBlending = LINEARBLEND;
 extern CRGBPalette16 myRedWhiteBluePalette;

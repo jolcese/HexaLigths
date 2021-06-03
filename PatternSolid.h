@@ -8,11 +8,6 @@ void solid_background()
   static boolean clockwise_dir = false;
   static uint8_t localHue = 0; 
 
-  // param_1 = 1 makes color controlled by param_2
-  if (g_pattern_parameter_1 == 1) {
-    localHue = g_pattern_parameter_2;
-  }
-
   // param_1 = 3 makes random dot directon
   if ((g_pattern_parameter_1 == 3) && (random(100) < g_pattern_parameter_2)) { 
     clockwise_dir = !clockwise_dir;
@@ -32,7 +27,16 @@ void solid_background()
     edge_index = EDGE_LEDS - 1;
   }
 
-  fill_solid(g_leds, NUM_LEDS, CHSV(localHue, 255, 255));
+  // param_1 = 1 makes color controlled by param_2
+  if (g_pattern_parameter_1 == 1) {
+    uint8_t r = g_pattern_parameter_2;
+    uint8_t g = g_pattern_parameter_3;
+    uint8_t b = g_pattern_parameter_4;
+    fill_solid(g_leds, NUM_LEDS, CRGB(r, g, b));
+  } else {
+    fill_solid(g_leds, NUM_LEDS, CHSV(localHue, 255, 255));
+  }
+  
 
   // param_1 = 2 or 3 makes dot loop around the edge
   if (g_pattern_parameter_1 == 2 || g_pattern_parameter_1 == 3) {

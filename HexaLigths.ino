@@ -1,28 +1,17 @@
-
 // *****************************************
 // HW Definition
 // *****************************************
-
 // MH ET Mini ESP32
 // https://forum.mhetlive.com/topic/8/mh-et-live-minikit-for-esp32/5
-//
-#define STRIP_DATA_PIN      16
+
+// *****************************************
+// Led
+// *****************************************
+
 #define FASTLED_ESP32_I2S
-
-// Wemos D1 ESP8266
-//
-//#define STRIP_DATA_PIN      D4
-//#define FASTLED_ESP8266_RAW_PIN_ORDER
-//#define FASTLED_ALLOW_INTERRUPTS 0
-
-// TODO
-// rainbow all around
-// eeprom
-// wifi
-// autoplay
-
 #include <FastLED.h>
 
+#define STRIP_DATA_PIN      16
 #define NUM_LEDS_PER_HEX    36
 #define NUM_HEX             5
 #define NUM_LEDS            NUM_LEDS_PER_HEX * NUM_HEX
@@ -30,164 +19,24 @@
 #define LED_TYPE            WS2812B
 #define COLOR_ORDER         GRB
 
-#include <Esp32WifiManager.h>
-WiFiManager wifiManager;
+#define FRAMES_PER_SECOND  120
 
 // *****************************************
-// Around Edge
+// Wifi
 // *****************************************
 
-//    0  -   35 Hex 1 
-//   36  -   71 Hex 2
-//   72  -  107 Hex 3
-//  108  -  143 Hex 4
-//  144  -  179 Hex 5
+#include <WiFiManager.h> 
+WiFiManager g_wifiManager;
+String g_nameString;
 
-#define EDGE_LEDS 132
+#include <WebServer.h>
+WebServer g_webServer(80);
 
-uint8_t around[EDGE_LEDS] = { 0, 1, 2,
-                   3, 4, 5, 6, 7, 8, 
-                   69, 70, 71,
-                   36, 37, 38,
-                   39, 40, 41, 42, 43, 44,
-                   45, 46 ,47 ,48, 49, 50,
-                   75, 76, 77, 78, 79, 80,
-                   141, 142, 143,
-                   108, 109, 110,
-                   171, 172, 173, 174, 175, 176,
-                   177, 178, 179,
-                   144, 145, 146,
-                   147, 148, 149, 150, 151, 152,
-                   153, 154, 155, 156, 157, 158,
-                   159, 160, 161, 162, 163, 164,
-                   117, 118, 119, 120, 121, 122,
-                   123, 124, 125, 126, 127, 128,
-                   129, 130, 131, 132, 133, 134,
-                   87, 88, 89, 90, 91, 92,
-                   93, 94, 95, 96, 97, 98,
-                   99, 100, 101, 102, 103, 104,
-                   57, 58, 59, 60, 61, 62,
-                   15, 16, 17, 18, 19, 20,
-                   21, 22, 23, 24, 25, 26,
-                   27, 28, 29, 30, 31, 32,
-                   33, 34, 35 };
-                   
-// *****************************************
-// Patterns
-// *****************************************
-#define PATTERNS_TOTAL 25
+#include <SPIFFS.h>
+#include "spiffshelper.h"
+#include "fsBrowser.h"
 
-char pattern_str[PATTERNS_TOTAL][48] = {
-  "Rotating Rainbow",
-  "Pacifica",
-  "Palette - Rainbow",
-  "Palette - RainbowStripe NoBlend",
-  "Palette - RainbowStripe Blend",
-  "Palette - Purple and Green",
-  "Palette - Random",
-  "Palette - BlackWhiteStripe NoBlend",
-  "Palette - BlackWhiteStripe Blend",
-  "Palette - Cloud",
-  "Palette - Party",
-  "Palette - RedWhiteBlue NoBlend",
-  "Palette - RedWhiteBlue Blend",
-  "Reel-rainbow",
-  "Reel-rainbowGlitter",
-  "Reel-confetti",
-  "Reel-sinelon",
-  "Reel-juggle",
-  "Reel-bpm",
-  "Cylon",
-  "Solid Backround Loop",
-  "Solid Backround Controlled",
-  "Solid Dot Loop",
-  "Solid Dot Loop Rand",
-  "Whole Tile Palette"
-};
-
-uint8_t g_pattern_delayloop_default[PATTERNS_TOTAL] = {
-  100,
-  20,
-  10,
-  8,
-  8,
-  8,
-  8,
-  8,
-  8,
-  8,
-  8,
-  8,
-  8,
-  8,
-  8,
-  20,
-  8,
-  8,
-  8,
-  30,
-  20,
-  20,
-  20,
-  20,
-  40
-};
-
-uint8_t pattern_parameter_1_default[PATTERNS_TOTAL] = {
-  0,
-  0,
-  1,
-  2,
-  3,
-  4,
-  5,
-  6,
-  7,
-  8,
-  9,
-  10,
-  11,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  1,
-  2,
-  3,
-  0
-};
-
-uint8_t pattern_parameter_2_default[PATTERNS_TOTAL] = {
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  3,
-  0,
-  0,
-  0,
-  200,
-  0,
-  1,
-  0,
-  10,
-  12
-};
+//#include "FS.h"
 
 // *****************************************
 // Global variables
@@ -200,17 +49,40 @@ uint8_t pattern_parameter_2_default[PATTERNS_TOTAL] = {
 
 CRGB g_leds[NUM_LEDS];
 
-uint8_t g_pattern;
+uint8_t g_pattern_index;
 int16_t g_pattern_delayloop;
 uint8_t g_pattern_parameter_1;
 uint8_t g_pattern_parameter_2;
+uint8_t g_pattern_parameter_3;
+uint8_t g_pattern_parameter_4;
+boolean g_power = true;
 boolean g_repeat = true;
 boolean g_cycle = true;
 int16_t g_brigthness = BRIGTHNESS_FULL;
 
 // *****************************************
+// Modules
+// *****************************************
+#include "PatternAround.h"
+#include "PatternColorpalette.h"
+#include "PatternCylon.h"
+#include "PatternDemoReel.h"
+#include "PatternPacifica.h"
+#include "PatternRainbow.h"
+#include "PatternSolid.h"
+#include "PatternWholeTile.h"
+
+#include "PatternDefinition.h"
+#include "FieldTypes.h"
+#include "Fields.h"
+
+// *****************************************
 // setup
 // *****************************************
+
+#include "ConsoleHelper.h"
+#include "WifiManagerHelper.h"
+
 void setup() {
   //FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(0xFFD0F0);
   FastLED.addLeds<LED_TYPE,STRIP_DATA_PIN,COLOR_ORDER>(g_leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
@@ -218,91 +90,127 @@ void setup() {
   FastLED.setBrightness( g_brigthness );
   FastLED.setDither(DISABLE_DITHER); 
 
-  g_pattern = 0;
-  g_pattern_delayloop = g_pattern_delayloop_default[g_pattern];
-  g_pattern_parameter_1 = pattern_parameter_1_default[g_pattern];
-  g_pattern_parameter_2 = pattern_parameter_2_default[g_pattern];
-
+  g_pattern_index = 0;
+  g_pattern_delayloop = g_patterns[g_pattern_index].delayloop;
+  g_pattern_parameter_1 = g_patterns[g_pattern_index].parameter1;
+  g_pattern_parameter_2 = g_patterns[g_pattern_index].parameter2;
+  g_pattern_parameter_3 = 0;
+  g_pattern_parameter_4 = 0;
   Serial.begin(115200);
 
+  print_system_status();
+
+  // *****************************************
+  // Wifi
+  // *****************************************
+
+  WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP   
+  WiFi.onEvent(WiFiEventHandler);
+  
+  printSpiffsContents();
+  setupWifiManager();
+
+  // *****************************************
+  // File Browse/Edit
+  // *****************************************
+
+  //list directory
+  g_webServer.on("/list", HTTP_GET, []() {
+    Serial.println("/list(GET)");
+    fsBrowserHandleFileList();
+  });
+  //load editor
+  g_webServer.on("/edit", HTTP_GET, []() {
+    Serial.println("/edit(GET)");
+    if (!fsBrowserHandleFileRead("/edit.htm")) g_webServer.send(404, "text/plain", "FileNotFound");
+  });
+  //create file
+  g_webServer.on("/edit", HTTP_PUT, []() {
+    Serial.println("/edit(PUT)");
+    fsBrowserHandleFileCreate();
+  });
+  //delete file
+  g_webServer.on("/edit", HTTP_DELETE, []() {
+    Serial.println("/edit(DELETE)");
+    fsBrowserHandleFileDelete();
+  });
+  //first callback is called after the request has ended with all parsed arguments
+  //second callback handles file uploads at that location
+  g_webServer.on("/edit", HTTP_POST, []() {
+    Serial.println("/edit(POST)");
+    g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
+    g_webServer.send(200, "text/plain", "");
+  }, fsBrowserHandleFileUpload);
+
+  // *****************************************
+  // Static Serve / REST endpoints
+  // *****************************************
+
+  g_webServer.on("/all", HTTP_GET, []() {
+    Serial.println("/all(GET)");
+    String json = getFieldsJson(fields, FIELD_COUNT);
+    g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
+    g_webServer.send(200, "application/json", json);
+  });
+
+  g_webServer.on("/pattern", HTTP_POST, []() {
+    Serial.println("/pattern(POST)");
+    String value = g_webServer.arg("value");
+    setPattern(value.toInt());
+    g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
+    g_webServer.send(200, "text/plain", String(g_pattern_index));
+  });
+
+  g_webServer.on("/patternByName", HTTP_POST, []() {
+    Serial.println("/patternByName(POST)");
+    String value = g_webServer.arg("value");
+    setPatternByName(value);
+    g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
+    g_webServer.send(200, "text/plain", String(g_pattern_index));
+  });
+
+  g_webServer.on("/power", HTTP_POST, []() {
+    Serial.println("/power(POST)");
+    String value = g_webServer.arg("value");
+    setPower(value);
+    g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
+    g_webServer.send(200, "text/plain", String(g_power));
+  });
+
+
+  g_webServer.serveStatic("/", SPIFFS, "/", "max-age=86400");
+
+  g_webServer.on("/patterns/solidColor", HTTP_POST, []() {
+    Serial.println("/patterns/solidColor(POST)");
+
+    String r = g_webServer.arg("r");
+    String g = g_webServer.arg("g");
+    String b = g_webServer.arg("b");
+    
+    CRGB color = CRGB(r.toInt(), g.toInt(), b.toInt());
+    g_pattern_parameter_2 = r.toInt();
+    g_pattern_parameter_3 = g.toInt();
+    g_pattern_parameter_4 = b.toInt();
+  
+    g_cycle = false;
+    g_pattern_parameter_1 = 1;
+    g_pattern_index = 21;
+
+    print_led_status();
+
+    g_webServer.send(200, "text/plain", String(color.r) + "," + String(color.g) + "," + String(color.b));
+    g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
+  });
+
+  //MDNS.begin(nameChar);
+  //MDNS.setHostname(nameChar);
+
+  g_webServer.begin();
+  Serial.println("HTTP web server started");
+
+  print_led_status();
   print_help();
   
-}
-
-//typedef void (*func)(uint8_t param_1, uint8_t param_2);
-typedef void (*func)();
-
-func pattern_function[PATTERNS_TOTAL] = {
-  &rotating_rainbow,
-  &pacifica,
-  &color_palette,
-  &color_palette,
-  &color_palette,
-  &color_palette,
-  &color_palette,
-  &color_palette,
-  &color_palette,
-  &color_palette,
-  &color_palette,
-  &color_palette,
-  &color_palette,
-  &rainbow,
-  &rainbowWithGlitter,
-  &confetti,
-  &sinelon,
-  &juggle,
-  &bpm,
-  &cylon,
-  &solid_background,
-  &solid_background,
-  &solid_background,
-  &solid_background,
-  &whole_tile
-}; 
-
-
-// *****************************************
-// Helper Functions
-// *****************************************
-
-void print_help() {
-  Serial.println("");
-  Serial.println("HexaCheap v1");
-  Serial.println("------------");
-  Serial.println("");
-  Serial.println(" Z - Previous Pattern");
-  Serial.println(" X - Next Pattern");
-  Serial.println(" A - Decrease Brightness");
-  Serial.println(" S - Increase Brightness");
-  Serial.println(" Q - Decrease Speed");
-  Serial.println(" W - Increase Speed");
-  Serial.println(" D - Decrease Pattern Prameter 2");
-  Serial.println(" F - Increase Pattern Prameter 2");
-  Serial.println(" C - Current Status");
-  Serial.println(" R - Repeat pattern on tiles");
-  Serial.println(" T - Cycle effect");
-  Serial.println(" H - Help");
-}
-
-void print_status() {
-  Serial.print("Pattern = ");
-  Serial.print(g_pattern);
-  Serial.print(" - ");
-  Serial.println(pattern_str[g_pattern]);
-  Serial.print("Brightness = ");
-  Serial.println(g_brigthness);
-  Serial.print("Delay = ");
-  Serial.println(g_pattern_delayloop);
-  Serial.print("Pattern Parameter 1 = ");
-  Serial.println(g_pattern_parameter_1);
-  Serial.print("Pattern Parameter 2 = ");
-  Serial.println(g_pattern_parameter_2);
-  Serial.print("Repeat = ");
-  Serial.println(g_repeat);
-  Serial.print("Cycle = ");
-  Serial.println(g_cycle);
-  Serial.print("FPS = ");
-  Serial.println(FastLED.getFPS());
 }
 
 // *****************************************
@@ -325,7 +233,7 @@ void loop() {
       // Show status
       case 'C':
       case 'c':
-        print_status();
+        print_led_status();
         break;
 
       // Repeat pattern on every Tile
@@ -355,33 +263,33 @@ void loop() {
       // Previous pattern
       case 'Z':
       case 'z':
-        if (g_pattern == 0) {
-          g_pattern = PATTERNS_TOTAL - 1;
+        if (g_pattern_index == 0) {
+          g_pattern_index = PATTERNS_TOTAL - 1;
         } else {
-          g_pattern--;        
+          g_pattern_index--;        
         }
-        Serial.print(g_pattern);
+        Serial.print(g_pattern_index);
         Serial.print(" - ");
-        Serial.println( pattern_str[g_pattern] );
-        g_pattern_delayloop = g_pattern_delayloop_default[g_pattern];
-        g_pattern_parameter_1 = pattern_parameter_1_default[g_pattern];
-        g_pattern_parameter_2 = pattern_parameter_2_default[g_pattern];
-        break;
+        Serial.println(g_patterns[g_pattern_index].name);
+        g_pattern_delayloop = g_patterns[g_pattern_index].delayloop;
+        g_pattern_parameter_1 = g_patterns[g_pattern_index].parameter1;
+        g_pattern_parameter_2 = g_patterns[g_pattern_index].parameter2;
+          break;
 
       // Next pattern
       case 'X':
       case 'x':
-        if (g_pattern == PATTERNS_TOTAL - 1) {
-          g_pattern = 0;
+        if (g_pattern_index == PATTERNS_TOTAL - 1) {
+          g_pattern_index = 0;
         } else {
-          g_pattern++;  
+          g_pattern_index++;  
         }
-        Serial.print(g_pattern);
+        Serial.print(g_pattern_index);
         Serial.print(" - ");
-        Serial.println(pattern_str[g_pattern]);
-        g_pattern_delayloop = g_pattern_delayloop_default[g_pattern];
-        g_pattern_parameter_1 = pattern_parameter_1_default[g_pattern];
-        g_pattern_parameter_2 = pattern_parameter_2_default[g_pattern];
+        Serial.println(g_patterns[g_pattern_index].name);
+        g_pattern_delayloop = g_patterns[g_pattern_index].delayloop;
+        g_pattern_parameter_1 = g_patterns[g_pattern_index].parameter1;
+        g_pattern_parameter_2 = g_patterns[g_pattern_index].parameter2;
         break;
 
       // Decrease Brigthness
@@ -447,5 +355,19 @@ void loop() {
     }
   }
   
-  pattern_function[g_pattern]();
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    setupWifiManager();
+  }
+
+  g_wifiManager.process();
+  g_webServer.handleClient();
+
+   if (g_power == false) {
+    fill_solid(g_leds, NUM_LEDS, CRGB::Black);
+    FastLED.show();
+    delay(1000 / FRAMES_PER_SECOND);
+  } else {
+      g_patterns[g_pattern_index].function();
+  }
 }
