@@ -1,6 +1,5 @@
 # TODO
 * simple.htm 
-  * change icon
   * add websocket
   * handle delaypostvalue
 * MDNS
