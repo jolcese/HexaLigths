@@ -23,8 +23,8 @@ void rotating_rainbow()
 
   // EVERY_N_MILLISECONDS( g_pattern_delayloop ) {
 
-    Serial.print("g_pattern_delayloop = ");
-    Serial.println(g_pattern_delayloop);
+    // Serial.print("g_pattern_delayloop = ");
+    // Serial.println(g_pattern_delayloop);
 
     if (g_cycle == true) {
       rotateLocal++;
