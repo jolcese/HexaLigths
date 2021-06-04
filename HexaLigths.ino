@@ -32,11 +32,13 @@ String g_nameString;
 #include <WebServer.h>
 WebServer g_webServer(80);
 
+//#include <FS.h>
 #include <SPIFFS.h>
 #include "spiffshelper.h"
 #include "fsBrowser.h"
 
-//#include "FS.h"
+boolean gFirstBoot = true;
+
 
 // *****************************************
 // Global variables
@@ -115,6 +117,11 @@ void setup() {
   // File Browse/Edit
   // *****************************************
 
+  //list directory
+  g_webServer.on("/status", HTTP_GET, []() {
+    Serial.println("/status(GET)");
+    fsBrowserHandleStatus();
+  });
   //list directory
   g_webServer.on("/list", HTTP_GET, []() {
     Serial.println("/list(GET)");
@@ -347,8 +354,10 @@ void loop() {
     }
   }
   
-  while (WiFi.status() != WL_CONNECTED)
+  while (WiFi.status() != WL_CONNECTED && gFirstBoot == false )
   {
+    Serial.println("Reconnect Wifi!");
+
     setupWifiManager();
     // MDNS.begin(nameChar);
     // MDNS.setHostname(nameChar);

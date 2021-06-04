@@ -85,6 +85,7 @@ void setupWifiManager() {
   //If connection fails it starts an access point with the specified name
   if(g_wifiManager.autoConnect(nameChar)){
     Serial.println("Wi-Fi connected");
+    gFirstBoot = false;
   }
   else {
     Serial.println("Wi-Fi manager portal running");

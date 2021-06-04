@@ -31,6 +31,35 @@ String getContentType(String filename){
   return "text/plain";
 }
 
+void fsBrowserHandleStatus(){
+  Serial.println("fsBrowserHandleStatus:");
+  // FSInfo fs_info;
+  String json;
+  json.reserve(128);
+
+  json = "{\"type\":\"";
+  // json += fsName;
+  json += "SPIFFS";
+  json += "\", \"isOk\":";
+  // if (fsOK) {
+  //   fileSystem->info(fs_info);
+    json += F("\"true\", \"totalBytes\":\"");
+    json += SPIFFS.totalBytes();
+    json += F("\", \"usedBytes\":\"");
+    json += SPIFFS.usedBytes();
+    json += "\"";
+  // } else {
+  //   json += "\"false\"";
+  // }
+  json += F(",\"unsupportedFiles\":\"");
+  // json += unsupportedFiles;
+  // json += "NA";
+  json += "\"}";
+
+  g_webServer.send(200, "application/json", json);
+}
+
+
 bool fsBrowserHandleFileRead(String path){
   Serial.println("fsBrowserHandleFileRead: " + path);
   if(path.endsWith("/")) path += "index.htm";
@@ -116,6 +145,8 @@ void fsBrowserHandleFileList() {
     output += (isDir)?"dir":"file";
     output += "\",\"name\":\"";
     output += String(file.name()).substring(1);
+    output += "\",\"size\":\"";
+    output += String(file.size());
     output += "\"}";
     file.close();
     
