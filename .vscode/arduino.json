@@ -1,7 +1,0 @@
-{
-    "board": "esp32:esp32:mhetesp32minikit",
-    "port": "/dev/tty.usbserial-02KOG39J",
-    "programmer": "arduino:atmel_ice",
-    "sketch": "HexaLigths.ino",
-    "configuration": "FlashFreq=80,PartitionScheme=default,UploadSpeed=921600,DebugLevel=none"
-}
