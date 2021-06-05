@@ -61,20 +61,20 @@ void setupWifiManager() {
                  String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
   macID.toUpperCase();
 
-  g_nameString = "HexaLigths-" + macID;
+  g_hostNameString = "HexaLigths-" + macID;
 
-  char nameChar[g_nameString.length() + 1];
-  memset(nameChar, 0, g_nameString.length() + 1);
+  //char g_hostNameChar[g_hostNameString.length() + 1];
+  memset(g_hostNameChar, 0, g_hostNameString.length() + 1);
 
-  for (int i = 0; i < g_nameString.length(); i++)
-    nameChar[i] = g_nameString.charAt(i);
+  for (int i = 0; i < g_hostNameString.length(); i++)
+    g_hostNameChar[i] = g_hostNameString.charAt(i);
 
   Serial.println();
   Serial.println("Wifi Manager Setup");
   Serial.println("------------------");
   Serial.printf("MAC address = %02x:%02x:%02x:%02x:%02x:%02x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
   Serial.println();
-  Serial.printf("Name: %s\n", nameChar );
+  Serial.printf("Name: %s\n", g_hostNameChar );
   Serial.println();
   
   // reset settings - wipe credentials for testing
@@ -83,7 +83,7 @@ void setupWifiManager() {
 
   //automatically connect using saved credentials if they exist
   //If connection fails it starts an access point with the specified name
-  if(g_wifiManager.autoConnect(nameChar)){
+  if(g_wifiManager.autoConnect(g_hostNameChar)){
     Serial.println("Wi-Fi connected");
     gFirstBoot = false;
   }

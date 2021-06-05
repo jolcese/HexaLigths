@@ -27,7 +27,8 @@ String setPower(String value) {
  g_power = value.toInt();
 //  if(g_power < 0) g_power = 0;
 //  else if (power > 1) power = 1;
- return String(g_power);
+  storageWrite(STORAGE_POWER, g_power);
+  return String(g_power);
 }
 
 String getPower() {
@@ -42,7 +43,8 @@ String setIdenticalTiles(String value) {
  g_identical_tiles = value.toInt();
 //  if(g_power < 0) g_power = 0;
 //  else if (power > 1) power = 1;
- return String(g_identical_tiles);
+  storageWrite(STORAGE_PATTERN_IDENT, g_power);
+  return String(g_identical_tiles);
 }
 
 String getIdenticalTiles() {
@@ -57,7 +59,8 @@ String setCycle(String value) {
  g_cycle = value.toInt();
 //  if(g_power < 0) g_power = 0;
 //  else if (power > 1) power = 1;
- return String(g_cycle);
+  storageWrite(STORAGE_PATTERN_CYCLE, g_power);
+  return String(g_cycle);
 }
 
 String getCycle() {
@@ -73,6 +76,8 @@ String setBrightness(String value) {
   if(g_brightness < 0) g_brightness = 0;
   else if (g_brightness > 255) g_brightness = 255;
   FastLED.setBrightness( g_brightness );
+
+  storageWrite(STORAGE_BRIGHTNESS, g_brightness);
 
   return String(g_brightness);
 }
@@ -99,6 +104,10 @@ String setPattern(String value)
   //   EEPROM.write(1, currentPatternIndex);
   //   EEPROM.commit();
   // }
+  storageWrite(STORAGE_PATTERN, g_pattern_index);
+  storageWrite(STORAGE_PATTERN_DELAY, g_pattern_delayloop);
+  storageWrite(STORAGE_PATTERN_PARAM1, g_pattern_parameter_1);
+  storageWrite(STORAGE_PATTERN_PARAM2, g_pattern_parameter_2);
 
   // broadcastInt("pattern", currentPatternIndex);
   return String(g_pattern_index);
@@ -147,7 +156,9 @@ String setDelay(String value) {
   g_pattern_delayloop = value.toInt();
   if(g_pattern_delayloop < 0) g_brightness = 0;
   else if (g_pattern_delayloop > 255) g_pattern_delayloop = 255;
-  return String(g_brightness);
+
+  storageWrite(STORAGE_PATTERN_DELAY, g_pattern_delayloop);
+  return String(g_pattern_delayloop);
 }
 
 // *****************************************
@@ -155,10 +166,8 @@ String setDelay(String value) {
 // *****************************************
 
 String getName() {
-  return g_nameString;
+  return g_hostNameString;
 }
-
-
 
 // String getPalette() {
 //   return String(currentPaletteIndex);

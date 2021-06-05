@@ -27,7 +27,8 @@
 
 #include <WiFiManager.h> 
 WiFiManager g_wifiManager;
-String g_nameString;
+String g_hostNameString;
+char g_hostNameChar[64];
 
 #include <WebServer.h>
 WebServer g_webServer(80);
@@ -36,6 +37,8 @@ WebServer g_webServer(80);
 #include <SPIFFS.h>
 #include "spiffshelper.h"
 #include "fsBrowser.h"
+
+#include <ESPmDNS.h>
 
 boolean gFirstBoot = true;
 
@@ -75,6 +78,9 @@ int16_t g_brightness = BRIGTHNESS_FULL;
 #include "PatternWholeTile.h"
 
 #include "PatternDefinition.h"
+
+#include "Storage.h"
+
 #include "FieldTypes.h"
 #include "Fields.h"
 
@@ -88,7 +94,7 @@ int16_t g_brightness = BRIGTHNESS_FULL;
 void setup() {
   //FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(0xFFD0F0);
   FastLED.addLeds<LED_TYPE,STRIP_DATA_PIN,COLOR_ORDER>(g_leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-  //FastLED.setMaxPowerInVoltsAndMilliamps( 5, MAX_POWER_MILLIAMPS);
+  //FastLED.setMaxPowerInVoltsAndMilliamps( 5, MAX_STORAGE_POWER_MILLIAMPS);
   FastLED.setBrightness( g_brightness );
   FastLED.setDither(BINARY_DITHER); 
 
@@ -170,6 +176,7 @@ void setup() {
   });
 
   g_webServer.on("/fieldValue", HTTP_POST, []() {
+    Serial.println("/fieldValue(POST)");
     String name = g_webServer.arg("name");
     String value = g_webServer.arg("value");
     String newValue = setFieldValue(name, value, fields, FIELD_COUNT);
@@ -201,12 +208,18 @@ void setup() {
     g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
   });
 
-  // MDNS.begin(nameChar);
-  // MDNS.setHostname(nameChar);
-
   g_webServer.begin();
   Serial.println("HTTP web server started");
 
+  if(!MDNS.begin(g_hostNameChar)) {
+      Serial.println("Error starting mDNS!");
+  } else {
+    Serial.println("MDNS started");
+    MDNS.addService("http", "tcp", 80);
+  }
+
+  storageLoadSettings();
+  
   print_led_status();
   print_help();
   
@@ -359,8 +372,6 @@ void loop() {
     Serial.println("Reconnect Wifi!");
 
     setupWifiManager();
-    // MDNS.begin(nameChar);
-    // MDNS.setHostname(nameChar);
   }
 
   g_wifiManager.process();

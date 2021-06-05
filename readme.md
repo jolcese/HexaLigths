@@ -2,9 +2,13 @@
 * simple.htm 
   * add websocket
   * handle delaypostvalue
-* MDNS
-* FRAMES_PER_SECOND
-* rainbow all around
-* eeprom
-* wifi
-* autoplay
+* ~~EEPROM~~
+* Wifi
+  * Test first connection (Does MDNS work?)
+  * ~~MDNS~~
+  * Update 
+* Patterns
+  * autoplay
+  * FRAMES_PER_SECOND
+  * rainbow all around
+* Better REST Logging
