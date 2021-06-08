@@ -58,15 +58,8 @@ boolean gFirstBoot = true;
 
 CRGB gLeds[NUM_LEDS];
 
-uint8_t gPatternIndex;
-// int16_t gPatternDelayloop;
-// uint8_t gPatternParameter_1;
-// uint8_t gPatternParameter_2;
-// uint8_t gPatternParameter_3;
-// uint8_t gPatternParameter_4;
+uint8_t gPatternIndex = 0;
 boolean gPowerLed = true;
-// boolean gIdenticalTiles = true;
-// boolean gCycle = true;
 int16_t gBrightness = BRIGTHNESS_FULL;
 
 // *****************************************
@@ -75,6 +68,7 @@ int16_t gBrightness = BRIGTHNESS_FULL;
 #include "Palettes.h"
 #include "PatternAround.h"
 
+// #include "PatternRainbow.h"
 #include "PatternColorPalette.h"
 #include "PatternCylon.h"
 #include "PatternDemoReel.h"
@@ -83,7 +77,6 @@ int16_t gBrightness = BRIGTHNESS_FULL;
 #include "PatternDemoReelJuggle.h"
 #include "PatternDemoReelBpm.h"
 #include "PatternPacifica.h"
-#include "PatternRainbow.h"
 #include "PatternSolid.h"
 #include "PatternSolidEffects.h"
 #include "PatternWholeTile.h"
@@ -108,13 +101,6 @@ void setup() {
   //FastLED.setMaxPowerInVoltsAndMilliamps( 5, MAX_STORAGE_POWER_MILLIAMPS);
   FastLED.setBrightness( gBrightness );
   FastLED.setDither(BINARY_DITHER); 
-
-  gPatternIndex = 0;
-  // gPatternDelayloop = g_patterns[gPatternIndex].delayloop;
-  // gPatternParameter_1 = g_patterns[gPatternIndex].parameter1;
-  // gPatternParameter_2 = g_patterns[gPatternIndex].parameter2;
-  // gPatternParameter_3 = 0;
-  // gPatternParameter_4 = 0;
   
   Serial.begin(115200);
 
@@ -197,27 +183,19 @@ void setup() {
 
   gWebServer.serveStatic("/", SPIFFS, "/", "max-age=86400");
 
-  // gWebServer.on("/patterns/solidColor", HTTP_POST, []() {
-  //   Serial.println("/patterns/solidColor(POST)");
+  gWebServer.on("/patterns/solidColor", HTTP_POST, []() {
+    Serial.println("/patterns/solidColor(POST)");
 
-  //   String r = gWebServer.arg("r");
-  //   String g = gWebServer.arg("g");
-  //   String b = gWebServer.arg("b");
-    
-  //   CRGB color = CRGB(r.toInt(), g.toInt(), b.toInt());
-  //   gPatternParameter_2 = r.toInt();
-  //   gPatternParameter_3 = g.toInt();
-  //   gPatternParameter_4 = b.toInt();
-  
-  //   gCycle = false;
-  //   gPatternParameter_1 = 1;
-  //   gPatternIndex = 21;
+    setSolidRed(gWebServer.arg("r"));
+    setSolidGreen(gWebServer.arg("g"));
+    setSolidBlue(gWebServer.arg("b"));
+    setPatternByName("Solid");
 
-  //   print_led_status();
+    print_led_status();
 
-  //   gWebServer.send(200, "text/plain", String(color.r) + "," + String(color.g) + "," + String(color.b));
-  //   gWebServer.sendHeader("Access-Control-Allow-Origin", "*");
-  // });
+    gWebServer.send(200, "text/plain", gWebServer.arg("r") + "," + gWebServer.arg("g") + "," + gWebServer.arg("b"));
+    gWebServer.sendHeader("Access-Control-Allow-Origin", "*");
+  });
 
   gWebServer.begin();
   Serial.println("HTTP web server started");
@@ -262,30 +240,6 @@ void loop() {
         print_led_status();
         break;
 
-      // // Repeat pattern on every Tile
-      // case 'R':
-      // case 'r':
-      //   if (gIdenticalTiles == true) {
-      //     gIdenticalTiles = false;
-      //     Serial.println("Pattern will be done across all LEDS");
-      //   } else {
-      //     gIdenticalTiles = true;
-      //     Serial.println("Pattern will be repeated on every Tile");
-      //   }
-      //   break;
-
-      // // Rotate effect
-      // case 'T':
-      // case 't':
-      //   if (gCycle == true) {
-      //     gCycle = false;
-      //     Serial.println("Pattern will not cycle");
-      //   } else {
-      //     gCycle = true;
-      //     Serial.println("Pattern will cycle");
-      //   }
-      //   break;
-
       // Previous pattern
       case 'Z':
       case 'z':
@@ -297,10 +251,7 @@ void loop() {
         Serial.print(gPatternIndex);
         Serial.print(" - ");
         Serial.println(g_patterns[gPatternIndex].name);
-        // gPatternDelayloop = g_patterns[gPatternIndex].delayloop;
-        // gPatternParameter_1 = g_patterns[gPatternIndex].parameter1;
-        // gPatternParameter_2 = g_patterns[gPatternIndex].parameter2;
-          break;
+        break;
 
       // Next pattern
       case 'X':
@@ -313,9 +264,6 @@ void loop() {
         Serial.print(gPatternIndex);
         Serial.print(" - ");
         Serial.println(g_patterns[gPatternIndex].name);
-        // gPatternDelayloop = g_patterns[gPatternIndex].delayloop;
-        // gPatternParameter_1 = g_patterns[gPatternIndex].parameter1;
-        // gPatternParameter_2 = g_patterns[gPatternIndex].parameter2;
         break;
 
       // Decrease Brigthness
@@ -342,39 +290,6 @@ void loop() {
         FastLED.setBrightness( (uint8_t) gBrightness );
         break;
 
-      // // Decrease Speed
-      // case 'Q':
-      // case 'q':
-      //   gPatternDelayloop += ((gPatternDelayloop * DELAYLOOP_STEP) > 1 ? (gPatternDelayloop * DELAYLOOP_STEP) : 1);
-      //   if (gPatternDelayloop > MAX_DELAYLOOP) gPatternDelayloop = MAX_DELAYLOOP;
-      //   Serial.print("Delay = ");
-      //   Serial.println(gPatternDelayloop);
-      //   break;
-
-      // // Increase Speed
-      // case 'W':
-      // case 'w':
-      //   gPatternDelayloop -= ((gPatternDelayloop * DELAYLOOP_STEP) > 1 ? (gPatternDelayloop * DELAYLOOP_STEP) : 1);
-      //   if (gPatternDelayloop < 0) gPatternDelayloop = 1;
-      //   Serial.print("Delay = ");
-      //   Serial.println(gPatternDelayloop);
-      //   break;
-
-      // // Decrease Parameter 2
-      // case 'D':
-      // case 'd':
-      //   gPatternParameter_2 -= 1;
-      //   Serial.print("Pattern Parameter 2 = ");
-      //   Serial.println(gPatternParameter_2);
-      //   break;
-
-      // // Increase Parameter 2
-      // case 'F':
-      // case 'f':
-      //   gPatternParameter_2 += 1;
-      //   Serial.print("Pattern Parameter 2 = ");
-      //   Serial.println(gPatternParameter_2);
-      //   break;
     }
     if (incomingByte != 10) {
       Serial.print("> ");

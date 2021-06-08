@@ -126,9 +126,9 @@ FieldList fields = {
 
     {"customSection", "Pattern Specific Parameters", SectionFieldType},
 
-    {"rainbowDelay", "Delay", NumberFieldType, 1, 255, getRainbowDelay, NULL, setRainbowDelay, "rainbow"},
-    {"rainbowCycle", "Cycle Colors", BooleanFieldType, 0, 1, getRainbowCycle, NULL, setRainbowCycle, "rainbow"},
-    {"rainbowIdenticalTiles", "Identical Tiles", BooleanFieldType, 0, 1, getRainbowIdenticalTiles, NULL, setRainbowIdenticalTiles, "rainbow"},
+    // {"rainbowDelay", "Delay", NumberFieldType, 1, 255, getRainbowDelay, NULL, setRainbowDelay, "rainbow"},
+    // {"rainbowCycle", "Cycle Colors", BooleanFieldType, 0, 1, getRainbowCycle, NULL, setRainbowCycle, "rainbow"},
+    // {"rainbowIdenticalTiles", "Identical Tiles", BooleanFieldType, 0, 1, getRainbowIdenticalTiles, NULL, setRainbowIdenticalTiles, "rainbow"},
     
     {"colorPaletteDelay", "Delay", NumberFieldType, 1, 255, getColorPaletteDelay, NULL, setColorPaletteDelay, "colorPalette"},
     {"colorPaletteCycle", "Cycle Colors", BooleanFieldType, 0, 1, getColorPaletteCycle, NULL, setColorPaletteCycle, "colorPalette"},

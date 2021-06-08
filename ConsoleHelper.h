@@ -10,13 +10,7 @@ void print_help() {
   Serial.println(" X - Next Pattern");
   Serial.println(" A - Decrease Brightness");
   Serial.println(" S - Increase Brightness");
-  // Serial.println(" Q - Decrease Speed");
-  // Serial.println(" W - Increase Speed");
-  // Serial.println(" D - Decrease Pattern Prameter 2");
-  // Serial.println(" F - Increase Pattern Prameter 2");
   Serial.println(" C - Current Status");
-  // Serial.println(" R - Repeat pattern on tiles");
-  // Serial.println(" T - Cycle effect");
   Serial.println(" H - Help");
   Serial.println();
 }
@@ -44,16 +38,6 @@ void print_led_status() {
   Serial.println(g_patterns[gPatternIndex].label);
   Serial.print("Brightness = ");
   Serial.println(gBrightness);
-  // Serial.print("Delay = ");
-  // Serial.println(gPatternDelayloop);
-  // Serial.print("Pattern Parameter 1 = ");
-  // Serial.println(gPatternParameter_1);
-  // Serial.print("Pattern Parameter 2 = ");
-  // Serial.println(gPatternParameter_2);
-  // Serial.print("Repeat = ");
-  // Serial.println(gIdenticalTiles);
-  // Serial.print("Cycle = ");
-  // Serial.println(gCycle);
   Serial.print("FPS = ");
   Serial.println(FastLED.getFPS());
   Serial.println();

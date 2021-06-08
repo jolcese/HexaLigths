@@ -1,10 +1,10 @@
 // used when hosting the site on the ESP8266
-// var address = location.hostname;
-// var urlBase = "";
+var address = location.hostname;
+var urlBase = "";
 
 // used when hosting the site somewhere other than the ESP8266 (handy for testing without waiting forever to upload to SPIFFS)
-var address = "192.168.30.34";
-var urlBase = "http://" + address + "/";
+// var address = "192.168.30.34";
+// var urlBase = "http://" + address + "/";
 
 var postColorTimer = {};
 var postValueTimer = {};
@@ -580,36 +580,7 @@ function postValue(name, value) {
   $("#status").html("Setting " + name + ": " + value + ", please wait...");
 
   var body = { name: name, value: value };
-
-  // // TODO: hack for new fields
-  // const oldFieldNames = [
-  //   "power",
-  //   "cooling",
-  //   "sparking",
-  //   "speed",
-  //   "twinkleSpeed",
-  //   "twinkleDensity",
-  //   "solidColor",
-  //   "pattern",
-  //   "patternName",
-  //   "palette",
-  //   "paletteName",
-  //   "brightness",
-  //   "autoplay",
-  //   "autoplayDuration",
-  //   "showClock",
-  //   "clockBackgroundFade"
-  // ];
-
-  // if (oldFieldNames.some(f => f === name)) {
-  //   $.post(urlBase + name + "?value=" + value, body, function (data) {
-  //     if (data.name != null) {
-  //       $("#status").html("Set " + name + ": " + data.name);
-  //     } else {
-  //       $("#status").html("Set " + name + ": " + data);
-  //     }
-  //   });
-  // } else {
+  
   $.post(urlBase + "fieldValue?name=" + name + "&value=" + value, body, function (data) {
       if (data.name != null) {
         $("#status").html("Set " + name + ": " + data.name);
@@ -617,7 +588,6 @@ function postValue(name, value) {
         $("#status").html("Set " + name + ": " + data);
       }
   });
-  // }
 }
 
 function delayPostValue(name, value) {

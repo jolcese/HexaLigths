@@ -2,9 +2,11 @@
 * simple.htm 
   * add websocket
   * handle delaypostvalue
+  * Fix SolidColor
 * ~~EEPROM~~
   * Reenable
   * add more variables
+  * Provide clean mechanism (delete Magic value)
 * Wifi
   * Test first connection (Does MDNS work?)
   * ~~MDNS~~
@@ -13,16 +15,17 @@
   * autoplay
   * FRAMES_PER_SECOND
   * rainbow all around
+  * More pattern (twinkle fox, pride)
 * Better REST Logging
 * Unify gHostNameString and gHostNameChar
-* More pattern (twinkle fox, pride)
 * Implement websockets and emit
 * ~~Per pattern variables~~
 * Remove SolidColor endpoint
 * Fix ColorFieldType
 * Fix Purple and Green
-* Fix SolidColor on simple.js
 * palettes and palettesNames in same structure
+* turn off red led
+* add bounds check on SetPattern and SetPalette
 
 
 

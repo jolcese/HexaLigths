@@ -12,7 +12,7 @@ typedef struct {
 typedef PatternStructure PatternStructureList[];
 
 PatternStructureList g_patterns = {
-  { "rainbow",        "Rotating Rainbow",        &fRainbow },            
+  // { "rainbow",        "Rotating Rainbow",        &fRainbow },            
   { "pacifica",       "Pacifica",                &fPacifica },
   { "colorPalette",   "Color Palette",           &fColorPalette },
   { "demoReel",       "Reel",                    &fDemoReel },
