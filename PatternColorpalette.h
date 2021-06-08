@@ -32,7 +32,7 @@ void fColorPalette()
   for(uint8_t hex = 0; hex < numTiles; hex++) { 
     // cidx = startIndex;
     for(uint8_t dot = 0; dot < numLeds; dot++) { 
-      gLeds[dot + hex * numLeds] = ColorFromPalette( palettes[gColorPalettePaletteIndex], (hueDelta * (uint8_t)(dot + startIndex)), brightness, gColorPaletteBlending);
+      gLeds[dot + hex * numLeds] = ColorFromPalette( palettes[gPaletteIndex], (hueDelta * (uint8_t)(dot + startIndex)), brightness, gColorPaletteBlending);
     }
   }
 

@@ -177,6 +177,17 @@ FieldList fields = {
     {"wholeTileStep", "Step", NumberFieldType, 5, 40, getWholeTileStep, NULL, setWholeTileStep, "wholeTile"},
     {"wholeTileHue", "Hue", NumberFieldType, 0, 255, getWholeTileHue, NULL, setWholeTileHue, "wholeTile"},
 
+    {"twinklesDelay", "Delay", NumberFieldType, 1, 255, getTwinklesDelay, NULL, setTwinklesDelay, "twinkles"},
+    {"twinklesPalette", "Palette", SelectFieldType, 0, PALETTE_COUNT, getPalette, getPalettes, setPalette, "twinkles"},
+    {"twinklesFadeIn", "Fade In Speed", NumberFieldType, 0, 255, getTwinklesFadeIn, NULL, setTwinklesFadeIn, "twinkles"},
+    {"twinklesFadeOut", "Fade Out Speed", NumberFieldType, 0, 255, getTwinklesFadeOut, NULL, setTwinklesFadeOut, "twinkles"},
+    {"twinklesDensity", "Density", NumberFieldType, 1, 255, getTwinklesDensity, NULL, setTwinklesDensity, "twinkles"},
+
+    {"twinkleFoxSpeed", "Speed", NumberFieldType, 0, 8, getTwinkleFoxSpeed, NULL, setTwinkleFoxSpeed, "twinkleFox"},
+    {"twinkleFoxDensity", "Density", NumberFieldType, 0, 8, getTwinkleFoxDensity, NULL, setTwinkleFoxDensity, "twinkleFox"},
+    {"twinkleFoxPalette", "Palette", SelectFieldType, 0, PALETTE_COUNT, getPalette, getPalettes, setPalette, "twinkleFox"},
+    {"twinkleFoxAutoBack", "Autoselect background", BooleanFieldType, 0, 1, getTwinkleFoxAutoBackground, NULL, setTwinkleFoxAutoBackground, "twinkleFox"},
+
     // {"autoplaySection", "Autoplay", SectionFieldType},
     // {"autoplay", "Autoplay", BooleanFieldType, 0, 1, getAutoplay},
     // {"autoplayDuration", "Autoplay Duration", NumberFieldType, 0, 255, getAutoplayDuration},

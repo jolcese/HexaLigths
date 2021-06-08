@@ -1,4 +1,12 @@
 // *****************************************
+// Hexa Ligths
+// *****************************************
+
+// Based on ESP8266 Fastled Webserver by Jason Coon: https://github.com/jasoncoon/esp8266-fastled-webserver
+// Based on ColorTwinkles by Mark Kriegsman: https://gist.github.com/kriegsman/5408ecd397744ba0393e
+// Based on TwinkleFOX by Mark Kriegsman: https://gist.github.com/kriegsman/756ea6dcae8e30845b5a
+
+// *****************************************
 // HW Definition
 // *****************************************
 // MH ET Mini ESP32
@@ -58,7 +66,7 @@ boolean gFirstBoot = true;
 
 CRGB gLeds[NUM_LEDS];
 
-uint8_t gPatternIndex = 0;
+uint8_t gPatternIndex = 3;
 boolean gPowerLed = true;
 int16_t gBrightness = BRIGTHNESS_FULL;
 
@@ -80,6 +88,8 @@ int16_t gBrightness = BRIGTHNESS_FULL;
 #include "PatternSolid.h"
 #include "PatternSolidEffects.h"
 #include "PatternWholeTile.h"
+#include "PatternTwinkles.h"
+#include "PatternTwinkleFox.h"
 
 #include "PatternDefinition.h"
 

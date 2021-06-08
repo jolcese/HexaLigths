@@ -23,7 +23,9 @@ PatternStructureList g_patterns = {
   { "cylon",          "Cylon",                   &fCylon },
   { "solid",          "Solid",                   &fSolid },
   { "solidEffects",   "Solid Effects",           &fSolidEffects },
-  { "wholeTile",      "Whole Tile Palette",      &fWholeTile }
+  { "wholeTile",      "Whole Tile Palette",      &fWholeTile },
+  { "twinkles",       "Twinkles",                &fTwinkles },
+  { "twinkleFox",     "Twinkle Fox",             &fTwinkleFox }
 };
 
 const uint8_t PATTERNS_TOTAL = (sizeof(g_patterns) / sizeof((g_patterns)[0]));

@@ -2,62 +2,96 @@
 // Palettes
 // *****************************************
 
-uint8_t gColorPalettePaletteIndex = 0; 
+uint8_t gPaletteIndex = 0; 
 
-extern const TProgmemPalette16 RedWhiteBluePalette_p PROGMEM;
-extern const TProgmemPalette16 BlackAndWhiteStripedPalette_p PROGMEM;
-extern CRGBPalette16 PurpleAndGreenPalette_p;
+// A pure "fairy light" palette with some brightness variations
+#define HALFFAIRY ((CRGB::FairyLight & 0xFEFEFE) / 2)
+#define QUARTERFAIRY ((CRGB::FairyLight & 0xFCFCFC) / 4)
+const TProgmemPalette16 FairyLight_p PROGMEM =
+{  CRGB::FairyLight, CRGB::FairyLight, CRGB::FairyLight, CRGB::FairyLight,
+   HALFFAIRY,        HALFFAIRY,        CRGB::FairyLight, CRGB::FairyLight,
+   QUARTERFAIRY,     QUARTERFAIRY,     CRGB::FairyLight, CRGB::FairyLight,
+   CRGB::FairyLight, CRGB::FairyLight, CRGB::FairyLight, CRGB::FairyLight };
 
-typedef struct {
-  CRGBPalette16 palette;
-  String name;
-} PaletteAndName;
-typedef PaletteAndName PaletteAndNameList[];
+// A mostly red palette with green accents and white trim.
+// "CRGB::Gray" is used as white to keep the brightness more uniform.
+const TProgmemPalette16 RedGreenWhite_p PROGMEM =
+{  CRGB::Red, CRGB::Red, CRGB::Red, CRGB::Red,
+   CRGB::Red, CRGB::Red, CRGB::Red, CRGB::Red,
+   CRGB::Red, CRGB::Red, CRGB::Gray, CRGB::Gray,
+   CRGB::Green, CRGB::Green, CRGB::Green, CRGB::Green };
 
-const CRGBPalette16 palettes[] = {
-    RainbowColors_p,
-    RainbowStripeColors_p,
-    CloudColors_p,
-    LavaColors_p,
-    OceanColors_p,
-    ForestColors_p,
-    PartyColors_p,
-    HeatColors_p,
-    RedWhiteBluePalette_p,
-    PurpleAndGreenPalette_p,
-    BlackAndWhiteStripedPalette_p
+// A mostly (dark) green palette with red berries.
+#define Holly_Green 0x00580c
+#define Holly_Red   0xB00402
+const TProgmemPalette16 Holly_p PROGMEM =
+{  Holly_Green, Holly_Green, Holly_Green, Holly_Green,
+   Holly_Green, Holly_Green, Holly_Green, Holly_Green,
+   Holly_Green, Holly_Green, Holly_Green, Holly_Green,
+   Holly_Green, Holly_Green, Holly_Green, Holly_Red };
+
+
+const TProgmemPalette16 Snow_p PROGMEM = {
+    CRGB::White,
+    CRGB::White,
+    CRGB::White,
+    CRGB::White,
+    0x555555,
+    0x555555,
+    0x555555,
+    0x555555,
+    0x555555,
+    0x555555,
+    0x555555,
+    0x555555,
+    0x555555,
+    0x555555,
+    0x555555,
+    0x555555
 };
 
-const uint8_t PALETTE_COUNT = (sizeof(palettes) / sizeof((palettes)[0]));
-
-const String paletteNames[PALETTE_COUNT] = {
-    "Rainbow",
-    "Rainbow Stripe",
-    "Cloud",
-    "Lava",
-    "Ocean",
-    "Forest",
-    "Party",
-    "Heat",
-    "Red White Blue",
-    "Purple and Green",
-    "Black and White"
+const TProgmemPalette16 Incandescent_p PROGMEM = {
+    0xE1A024,
+    0xE1A024,
+    0xE1A024,
+    0xE1A024,
+    0xE1A024,
+    0xE1A024,
+    0xE1A024,
+    0xE1A024,
+    0xE1A024,
+    0xE1A024,
+    0xE1A024,
+    0xE1A024,
+    0xE1A024,
+    0xE1A024,
+    0xE1A024,
+    0xE1A024
 };
 
-CRGB gpp_purple = CHSV( HUE_PURPLE, 255, 255);
-CRGB gpp_green  = CHSV( HUE_GREEN, 255, 255);
-CRGB gpp_black  = CRGB::Black;
-
-CRGBPalette16 PurpleAndGreenPalette_p = CRGBPalette16(
-    gpp_green,  gpp_green,  gpp_black,  gpp_black,
-    gpp_purple, gpp_purple, gpp_black,  gpp_black,
-    gpp_green,  gpp_green,  gpp_black,  gpp_black,
-    gpp_purple, gpp_purple, gpp_black,  gpp_black );
+const TProgmemPalette16 PurpleAndGreenPalette_p PROGMEM = {
+    CRGB::Green,
+    CRGB::Green,
+    CRGB::Black,
+    CRGB::Black,
+    CRGB::Purple,
+    CRGB::Purple,
+    CRGB::Black,
+    CRGB::Black,
+    CRGB::Green,
+    CRGB::Green,
+    CRGB::Black,
+    CRGB::Black,
+    CRGB::Purple,
+    CRGB::Purple,
+    CRGB::Black,
+    CRGB::Black
+};
 
 const TProgmemPalette16 RedWhiteBluePalette_p PROGMEM =
 {
     CRGB::Red,
-    CRGB::Gray, // 'white' is too bright compared to red and blue
+    CRGB::Gray, 
     CRGB::Blue,
     CRGB::Black,
     CRGB::Red,
@@ -94,18 +128,64 @@ const TProgmemPalette16 BlackAndWhiteStripedPalette_p PROGMEM =
     CRGB::Black
 };
 
+// typedef struct {
+//   CRGBPalette16 palette;
+//   String name;
+// } PaletteAndName;
+// typedef PaletteAndName PaletteAndNameList[];
+
+const CRGBPalette16 palettes[] = {
+    RainbowColors_p,
+    RainbowStripeColors_p,
+    CloudColors_p,
+    LavaColors_p,
+    OceanColors_p,
+    ForestColors_p,
+    PartyColors_p,
+    HeatColors_p,
+    RedWhiteBluePalette_p,
+    PurpleAndGreenPalette_p,
+    BlackAndWhiteStripedPalette_p,
+    Snow_p,
+    Incandescent_p,
+    RedGreenWhite_p,
+    Holly_p,
+    FairyLight_p
+};
+
+const uint8_t PALETTE_COUNT = (sizeof(palettes) / sizeof((palettes)[0]));
+
+const String paletteNames[PALETTE_COUNT] = {
+    "Rainbow",
+    "Rainbow Stripe",
+    "Cloud",
+    "Lava",
+    "Ocean",
+    "Forest",
+    "Party",
+    "Heat",
+    "Red White Blue",
+    "Purple and Green",
+    "Black and White",
+    "Snow",
+    "Incandescent",
+    "Red Green White",
+    "Holly",
+    "Fairy Light"
+}; 
+
 String setPalette(String value)
 {
-  gColorPalettePaletteIndex = value.toInt();;
+  gPaletteIndex = value.toInt();;
 
-  if (gColorPalettePaletteIndex >= PALETTE_COUNT)
-    gColorPalettePaletteIndex = PALETTE_COUNT - 1;
+  if (gPaletteIndex >= PALETTE_COUNT)
+    gPaletteIndex = PALETTE_COUNT - 1;
 
-  return String(gColorPalettePaletteIndex);
+  return String(gPaletteIndex);
 
 }
 String getPalette() {
-  return String(gColorPalettePaletteIndex);
+  return String(gPaletteIndex);
 }
 
 String getPalettes() {
