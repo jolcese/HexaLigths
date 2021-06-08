@@ -36,6 +36,7 @@ struct Field {
   FieldGetter getValue;
   FieldGetter getOptions;
   FieldSetter setValue;
+  String pattern;
 };
 
 typedef Field FieldList[];
@@ -94,6 +95,12 @@ String getFieldsJson(FieldList fields, uint8_t count) {
       json += "]";
     }
 
+    if (field.pattern) {
+      json += ",\"pattern\":\"";
+      json += field.pattern;
+      json += "\"";
+    }
+
     json += "}";
 
     if (i < count - 1)
@@ -111,7 +118,7 @@ String getFieldsJson(FieldList fields, uint8_t count) {
   json += "{\"name\":\"power\",\"label\":\"Power\",\"type\":\"Boolean\",\"value\":" + String(power) + "},";
   json += "{\"name\":\"brightness\",\"label\":\"Brightness\",\"type\":\"Number\",\"value\":" + String(brightness) + "},";
 
-  json += "{\"name\":\"pattern\",\"label\":\"Pattern\",\"type\":\"Select\",\"value\":" + String(g_pattern_index) + ",\"options\":[";
+  json += "{\"name\":\"pattern\",\"label\":\"Pattern\",\"type\":\"Select\",\"value\":" + String(gPatternIndex) + ",\"options\":[";
   for (uint8_t i = 0; i < patternCount; i++)
   {
     json += "\"" + patterns[i].name + "\"";

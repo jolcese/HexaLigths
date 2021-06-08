@@ -1,10 +1,10 @@
 // used when hosting the site on the ESP8266
-var address = location.hostname;
-var urlBase = "";
+// var address = location.hostname;
+// var urlBase = "";
 
 // used when hosting the site somewhere other than the ESP8266 (handy for testing without waiting forever to upload to SPIFFS)
-// var address = "192.168.30.34";
-// var urlBase = "http://" + address + "/";
+var address = "192.168.30.34";
+var urlBase = "http://" + address + "/";
 
 var postColorTimer = {};
 var postValueTimer = {};
@@ -37,106 +37,89 @@ $(document).ready(function() {
     );
   });
 
-  $("#btnScrollToBottom").click(function () {
-    $([document.documentElement, document.body]).animate(
-      {
-        scrollTop: $("#accordionImportExport").offset().top,
-      },
-      1000
-    );
-  });
+  // $("#btnScrollToBottom").click(function () {
+  //   $([document.documentElement, document.body]).animate(
+  //     {
+  //       scrollTop: $("#accordionImportExport").offset().top,
+  //     },
+  //     1000
+  //   );
+  // });
 
-  $("#btnCopy").click(function () {
-    $("#textareaFields").select();
-    document.execCommand("copy");
-  });
+  // $("#btnCopy").click(function () {
+  //   $("#textareaFields").select();
+  //   document.execCommand("copy");
+  // });
 
-  $("#btnExport").click(function () {
-    const fields = allData.reduce((previous, current) => {
-      if (
-        current.name === "name" ||
-        current.value === null ||
-        current.value === undefined
-      )
-        return previous;
-      return {
-        ...previous,
-        [current.name]: current.value,
-      };
-    }, {});
-    $("#textareaFields").val(JSON.stringify(fields, null, 2));
-  });
+  // $("#btnExport").click(function () {
+  //   const fields = allData.reduce((previous, current) => {
+  //     if (
+  //       current.name === "name" ||
+  //       current.value === null ||
+  //       current.value === undefined
+  //     )
+  //       return previous;
+  //     return {
+  //       ...previous,
+  //       [current.name]: current.value,
+  //     };
+  //   }, {});
+  //   $("#textareaFields").val(JSON.stringify(fields, null, 2));
+  // });
 
-  $("#btnImport").click(function () {
-    const text = $("#textareaFields").val();
-    const fields = JSON.parse(text);
-    Object.keys(fields).forEach((name) => {
-      const newValue = fields[name];
-      if (newValue === null || newValue === undefined) return;
+  // $("#btnImport").click(function () {
+  //   const text = $("#textareaFields").val();
+  //   const fields = JSON.parse(text);
+  //   Object.keys(fields).forEach((name) => {
+  //     const newValue = fields[name];
+  //     if (newValue === null || newValue === undefined) return;
 
-      const field = allData.find((f) => f.name === name);
-      if (!field || field.value === newValue) return;
-      const oldValue = field.value;
+  //     const field = allData.find((f) => f.name === name);
+  //     if (!field || field.value === newValue) return;
+  //     const oldValue = field.value;
 
-      console.log({ name, oldValue, newValue });
-      postValue(name, newValue);
-      field.value = newValue;
-      updateFieldValue(name, newValue);
-    });
-  });
+  //     console.log({ name, oldValue, newValue });
+  //     postValue(name, newValue);
+  //     field.value = newValue;
+  //     updateFieldValue(name, newValue);
+  //   });
+  // });
 
-  $("#btnSave").click( function() {
-    var text = $("#textareaFields").val();
-    var filename = $("#inputFilename").val() || "preset1.json";
-    var blob = new Blob([text], {type: "application/json;charset=utf-8"});
-    saveAs(blob, filename);
-  });
+  // $("#btnSave").click( function() {
+  //   var text = $("#textareaFields").val();
+  //   var filename = $("#inputFilename").val() || "preset1.json";
+  //   var blob = new Blob([text], {type: "application/json;charset=utf-8"});
+  //   saveAs(blob, filename);
+  // });
 
-  $("#btnOpen").click( function() {
-    $('#inputFile').click();
-  });
+  // $("#btnOpen").click( function() {
+  //   $('#inputFile').click();
+  // });
 
-  $('#inputFile').change(function(e) {
-    var files = e.target.files;
-    if (files.length < 1) {
-        return;
-    }
-    var file = files[0];
-    var reader = new FileReader();
-    reader.onload = onFileLoaded;
-    reader.readAsText(file);
-    $(this).val("");
-  });
+  // $('#inputFile').change(function(e) {
+  //   var files = e.target.files;
+  //   if (files.length < 1) {
+  //       return;
+  //   }
+  //   var file = files[0];
+  //   var reader = new FileReader();
+  //   reader.onload = onFileLoaded;
+  //   reader.readAsText(file);
+  //   $(this).val("");
+  // });
 
-  function onFileLoaded (e) {
-    const result = e.target.result;
-    const json = JSON.parse(result);
-    $("#textareaFields").val(JSON.stringify(json, null, 2));
-  }
+  // function onFileLoaded (e) {
+  //   const result = e.target.result;
+  //   const json = JSON.parse(result);
+  //   $("#textareaFields").val(JSON.stringify(json, null, 2));
+  // }
 
   $.get(urlBase + "all", function(data) {
       $("#status").html("Loading, please wait...");
 
       allData = data;
 
-      $.each(data, function(index, field) {
-        if (field.type == "Number") {
-          addNumberField(field);
-        } else if (field.type == "Boolean") {
-          addBooleanField(field);
-        } else if (field.type == "Select") {
-          addSelectField(field);
-        } else if (field.type == "Color") {
-          addColorFieldPalette(field);
-          addColorFieldPicker(field);
-        } else if (field.type == "Section") {
-          addSectionField(field);
-        } else if (field.type == "String") {
-          addStringField(field, false);
-        } else if (field.type == "Label") {
-          addStringField(field, true);
-        }
-      });
+      showFields(undefined);
 
       $(".minicolors").minicolors({
         theme: "bootstrap",
@@ -153,7 +136,53 @@ $(document).ready(function() {
     });
 });
 
+function showFields(patternIndex) {
+
+  activePatternName = getActivePatternName(patternIndex);
+
+  $.each(allData, function(index, field) {
+
+    if (field.pattern == activePatternName || field.pattern == "all") {
+
+      if (field.type == "Number") {
+        addNumberField(field);
+      } else if (field.type == "Boolean") {
+        addBooleanField(field);
+      } else if (field.type == "Select") {
+        addSelectField(field);
+      } else if (field.type == "Color") {
+        addColorFieldPalette(field);
+        addColorFieldPicker(field);
+      } else if (field.type == "Section") {
+        addSectionField(field);
+      } else if (field.type == "String") {
+        addStringField(field, false);
+      } else if (field.type == "Label") {
+        addStringField(field, true);
+      }
+    }
+  });
+}
+
+function getActivePatternName (patternIndex) {
+
+  var found = allData.find(element => element.name == "pattern");
+
+  if (patternIndex != undefined) {
+    patternName = found.options[patternIndex].name;
+  } else {
+    patternName = found.options[found.value].name;
+  }
+  return (patternName);
+}
+
+function setActivePattern (patternIndex) {
+  var index = allData.findIndex(element => element.name == "pattern");
+  allData[index].value = patternIndex;
+}
+
 function addNumberField(field) {
+
   var template = $("#numberTemplate").clone();
 
   template.attr("id", "form-group-" + field.name);
@@ -250,7 +279,7 @@ function addSelectField(field) {
   select.attr("id", id);
 
   for (var i = 0; i < field.options.length; i++) {
-    var optionText = field.options[i];
+    var optionText = field.options[i].label;
     var option = $("<option></option>");
     option.text(optionText);
     option.attr("value", i);
@@ -262,6 +291,13 @@ function addSelectField(field) {
   select.change(function() {
     var value = template.find("#" + id + " option:selected").index();
     postValue(field.name, value);
+
+    if (field.name == "pattern") {
+      $("#form").empty();
+      setActivePattern(value);
+      showFields(value);
+    }
+
   });
 
   var previousButton = template.find(".btn-previous");
@@ -274,6 +310,13 @@ function addSelectField(field) {
     if(value < 0)
       value = count - 1;
     select.val(value);
+
+    if (field.name == "pattern") {
+      $("#form").empty();
+      setActivePattern(value);
+      showFields(value);
+    }
+
     postValue(field.name, value);
   });
 
@@ -284,6 +327,13 @@ function addSelectField(field) {
     if(value >= count)
       value = 0;
     select.val(value);
+    
+    if (field.name == "pattern") {
+      $("#form").empty();
+      setActivePattern(value);
+      showFields(value);
+    }
+
     postValue(field.name, value);
   });
 

@@ -15,7 +15,7 @@ File fsUploadFile;
 // }
 
 String getContentType(String filename){
-  if(g_webServer.hasArg("download")) return "application/octet-stream";
+  if(gWebServer.hasArg("download")) return "application/octet-stream";
   else if(filename.endsWith(".htm")) return "text/html";
   else if(filename.endsWith(".html")) return "text/html";
   else if(filename.endsWith(".css")) return "text/css";
@@ -56,7 +56,7 @@ void fsBrowserHandleStatus(){
   // json += "NA";
   json += "\"}";
 
-  g_webServer.send(200, "application/json", json);
+  gWebServer.send(200, "application/json", json);
 }
 
 
@@ -69,7 +69,7 @@ bool fsBrowserHandleFileRead(String path){
     if(SPIFFS.exists(pathWithGz))
       path += ".gz";
     File file = SPIFFS.open(path, "r");
-    size_t sent = g_webServer.streamFile(file, contentType);
+    size_t sent = gWebServer.streamFile(file, contentType);
     file.close();
     return true;
   }
@@ -77,8 +77,8 @@ bool fsBrowserHandleFileRead(String path){
 }
 
 void fsBrowserHandleFileUpload(){
-  if(g_webServer.uri() != "/edit") return;
-  HTTPUpload& upload = g_webServer.upload();
+  if(gWebServer.uri() != "/edit") return;
+  HTTPUpload& upload = gWebServer.upload();
   if(upload.status == UPLOAD_FILE_START){
     String filename = upload.filename;
     if(!filename.startsWith("/")) filename = "/"+filename;
@@ -97,40 +97,40 @@ void fsBrowserHandleFileUpload(){
 }
 
 void fsBrowserHandleFileDelete(){
-  if(g_webServer.args() == 0) return g_webServer.send(500, "text/plain", "BAD ARGS");
-  String path = g_webServer.arg(0);
+  if(gWebServer.args() == 0) return gWebServer.send(500, "text/plain", "BAD ARGS");
+  String path = gWebServer.arg(0);
   Serial.println("fsBrowserHandleFileDelete: " + path);
   if(path == "/")
-    return g_webServer.send(500, "text/plain", "BAD PATH");
+    return gWebServer.send(500, "text/plain", "BAD PATH");
   if(!SPIFFS.exists(path))
-    return g_webServer.send(404, "text/plain", "FileNotFound");
+    return gWebServer.send(404, "text/plain", "FileNotFound");
   SPIFFS.remove(path);
-  g_webServer.send(200, "text/plain", "");
+  gWebServer.send(200, "text/plain", "");
   path = String();
 }
 
 void fsBrowserHandleFileCreate(){
-  if(g_webServer.args() == 0)
-    return g_webServer.send(500, "text/plain", "BAD ARGS");
-  String path = g_webServer.arg(0);
+  if(gWebServer.args() == 0)
+    return gWebServer.send(500, "text/plain", "BAD ARGS");
+  String path = gWebServer.arg(0);
   Serial.println("fsBrowserHandleFileCreate: " + path);
   if(path == "/")
-    return g_webServer.send(500, "text/plain", "BAD PATH");
+    return gWebServer.send(500, "text/plain", "BAD PATH");
   if(SPIFFS.exists(path))
-    return g_webServer.send(500, "text/plain", "FILE EXISTS");
+    return gWebServer.send(500, "text/plain", "FILE EXISTS");
   File file = SPIFFS.open(path, "w");
   if(file)
     file.close();
   else
-    return g_webServer.send(500, "text/plain", "CREATE FAILED");
-  g_webServer.send(200, "text/plain", "");
+    return gWebServer.send(500, "text/plain", "CREATE FAILED");
+  gWebServer.send(200, "text/plain", "");
   path = String();
 }
 
 void fsBrowserHandleFileList() {
-  if(!g_webServer.hasArg("dir")) {g_webServer.send(500, "text/plain", "BAD ARGS"); return;}
+  if(!gWebServer.hasArg("dir")) {gWebServer.send(500, "text/plain", "BAD ARGS"); return;}
   
-  String path = g_webServer.arg("dir");
+  String path = gWebServer.arg("dir");
   Serial.println("fsBrowserHandleFileList: " + path);
   
   File root = SPIFFS.open(path);
@@ -153,5 +153,5 @@ void fsBrowserHandleFileList() {
     file = root.openNextFile();
   }  
   output += "]";
-  g_webServer.send(200, "text/json", output);
+  gWebServer.send(200, "text/json", output);
 }

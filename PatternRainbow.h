@@ -1,46 +1,85 @@
 // *****************************************
-// 0 - Rotating Rainbow
+// Rainbow
 // *****************************************
 
-void rotating_rainbow()
+uint8_t gRainbowDelay = 100; 
+boolean gRainbowCycle = true;
+boolean gRainbowIdenticalTiles = true;
+
+void fRainbow()
 {
-  uint8_t n_tiles;
-  uint8_t n_leds;
-  float gfHueDelta;
+  uint8_t numTiles;
+  uint8_t numLeds;
+  float hueDelta;
   static uint8_t rotateLocal = 0;
   
-  if (g_identical_tiles == true) {
-    n_tiles = NUM_HEX;
-    gfHueDelta = (float) 255 / (NUM_LEDS_PER_HEX - 1);
-    n_leds = NUM_LEDS_PER_HEX;
+  if (gRainbowIdenticalTiles == true) {
+    numTiles = NUM_HEX;
+    hueDelta = (float) 255 / (NUM_LEDS_PER_HEX - 1);
+    numLeds = NUM_LEDS_PER_HEX;
   }
   else
   {
-    n_tiles = 1;
-    gfHueDelta = (float) 255 / (NUM_LEDS - 1);
-    n_leds = NUM_LEDS;    
+    numTiles = 1;
+    hueDelta = (float) 255 / (NUM_LEDS - 1);
+    numLeds = NUM_LEDS;    
   }
 
-  // EVERY_N_MILLISECONDS( g_pattern_delayloop ) {
+  if (gRainbowCycle == true) {
+    rotateLocal++;
+    if (rotateLocal > numLeds - 1) rotateLocal = 0;
+  }
+  
+  for(uint8_t hex = 0; hex < numTiles; hex++) { 
+    for(uint8_t dot = 0; dot < numLeds; dot++) { 
 
-    // Serial.print("g_pattern_delayloop = ");
-    // Serial.println(g_pattern_delayloop);
-
-    if (g_cycle == true) {
-      rotateLocal++;
-      if (rotateLocal > n_leds - 1) rotateLocal = 0;
+      uint16_t idx = dot + rotateLocal;
+      if (idx > numLeds - 1) idx -= numLeds;
+      gLeds[dot + hex * numLeds] = CHSV((hueDelta * idx), 255, 255);
     }
-    
-    for(uint8_t hex = 0; hex < n_tiles; hex++) { 
-      for(uint8_t dot = 0; dot < n_leds; dot++) { 
+  }
+  FastLED.delay(gRainbowDelay);
 
-        uint16_t idx = dot + rotateLocal;
-        if (idx > n_leds - 1) idx -= n_leds;
-        g_leds[dot + hex * n_leds] = CHSV((gfHueDelta * idx), 255, 255);
-      }
-    }
-  // }
+}
 
-  // FastLED.show();
-  // delay(g_pattern_delayloop);
+// *****************************************
+// Cycle
+// *****************************************
+
+String setRainbowCycle(String value) {
+ gRainbowCycle = value.toInt();
+  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  return String(gRainbowCycle);
+}
+
+String getRainbowCycle() {
+  return String(gRainbowCycle);
+}
+
+// *****************************************
+// Identical Tiles
+// *****************************************
+
+String setRainbowIdenticalTiles(String value) {
+ gRainbowIdenticalTiles = value.toInt();
+  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  return String(gRainbowIdenticalTiles);
+}
+
+String getRainbowIdenticalTiles() {
+  return String(gRainbowIdenticalTiles);
+}
+
+// *****************************************
+// Delay
+// *****************************************
+
+String setRainbowDelay(String value) {
+ gRainbowDelay = value.toInt();
+  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  return String(gRainbowDelay);
+}
+
+String getRainbowDelay() {
+  return String(gRainbowDelay);
 }

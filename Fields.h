@@ -24,47 +24,15 @@
 // *****************************************
 
 String setPower(String value) {
- g_power = value.toInt();
-//  if(g_power < 0) g_power = 0;
+ gPowerLed = value.toInt();
+//  if(gPowerLed < 0) gPowerLed = 0;
 //  else if (power > 1) power = 1;
-  storageWrite(STORAGE_POWER, g_power);
-  return String(g_power);
+  storageWrite(STORAGE_POWER, gPowerLed);
+  return String(gPowerLed);
 }
 
 String getPower() {
-  return String(g_power);
-}
-
-// *****************************************
-// Identical Tiles
-// *****************************************
-
-String setIdenticalTiles(String value) {
- g_identical_tiles = value.toInt();
-//  if(g_power < 0) g_power = 0;
-//  else if (power > 1) power = 1;
-  storageWrite(STORAGE_PATTERN_IDENT, g_power);
-  return String(g_identical_tiles);
-}
-
-String getIdenticalTiles() {
-  return String(g_identical_tiles);
-}
-
-// *****************************************
-// Cycle
-// *****************************************
-
-String setCycle(String value) {
- g_cycle = value.toInt();
-//  if(g_power < 0) g_power = 0;
-//  else if (power > 1) power = 1;
-  storageWrite(STORAGE_PATTERN_CYCLE, g_power);
-  return String(g_cycle);
-}
-
-String getCycle() {
-  return String(g_cycle);
+  return String(gPowerLed);
 }
 
 // *****************************************
@@ -72,18 +40,18 @@ String getCycle() {
 // *****************************************
 
 String setBrightness(String value) {
-  g_brightness = value.toInt();
-  if(g_brightness < 0) g_brightness = 0;
-  else if (g_brightness > 255) g_brightness = 255;
-  FastLED.setBrightness( g_brightness );
+  gBrightness = value.toInt();
+  if(gBrightness < 0) gBrightness = 0;
+  else if (gBrightness > 255) gBrightness = 255;
+  FastLED.setBrightness( gBrightness );
 
-  storageWrite(STORAGE_BRIGHTNESS, g_brightness);
+  storageWrite(STORAGE_BRIGHTNESS, gBrightness);
 
-  return String(g_brightness);
+  return String(gBrightness);
 }
 
 String getBrightness() {
-  return String(g_brightness);
+  return String(gBrightness);
 }
 
 // *****************************************
@@ -92,41 +60,34 @@ String getBrightness() {
 
 String setPattern(String value)
 {
-  g_pattern_index = value.toInt();;
+  gPatternIndex = value.toInt();;
 
-  if (g_pattern_index >= PATTERNS_TOTAL)
-    g_pattern_index = PATTERNS_TOTAL - 1;
+  if (gPatternIndex >= PATTERNS_TOTAL)
+    gPatternIndex = PATTERNS_TOTAL - 1;
 
-  g_pattern_delayloop = g_patterns[g_pattern_index].delayloop;
-  g_pattern_parameter_1 = g_patterns[g_pattern_index].parameter1;
-  g_pattern_parameter_2 = g_patterns[g_pattern_index].parameter2;
   // if (autoplay == 0) {
   //   EEPROM.write(1, currentPatternIndex);
   //   EEPROM.commit();
   // }
-  storageWrite(STORAGE_PATTERN, g_pattern_index);
-  storageWrite(STORAGE_PATTERN_DELAY, g_pattern_delayloop);
-  storageWrite(STORAGE_PATTERN_PARAM1, g_pattern_parameter_1);
-  storageWrite(STORAGE_PATTERN_PARAM2, g_pattern_parameter_2);
+  storageWrite(STORAGE_PATTERN, gPatternIndex);
 
   // broadcastInt("pattern", currentPatternIndex);
-  return String(g_pattern_index);
-
+  return String(gPatternIndex);
 }
 
 String getPattern() {
-  return String(g_pattern_index);
+  return String(gPatternIndex);
 }
 
 String getPatterns() {
   String json = "";
-
   for (uint8_t i = 0; i < PATTERNS_TOTAL; i++) {
-    json += "\"" + String(g_patterns[i].name) + "\"";
+
+    json += "{\"label\":\"" + g_patterns[i].label + "\",\"name\":\"" + g_patterns[i].name + "\"}";
     if (i < PATTERNS_TOTAL - 1)
       json += ",";
   }
-
+  
   return json;
 }
 
@@ -134,10 +95,10 @@ String getPatterns() {
 // PatternByName
 // *****************************************
 
-void setPatternByName(String name)
+void setPatternByName(String label)
 {
   for (uint8_t i = 0; i < PATTERNS_TOTAL; i++) {
-    if (String(g_patterns[i].name) == name) {
+    if (g_patterns[i].label == label) {
       setPattern(String(i));
       break;
     }
@@ -145,221 +106,76 @@ void setPatternByName(String name)
 }
 
 // *****************************************
-// Delay
-// *****************************************
-
-String getDelay() {
-  return String(g_pattern_delayloop);
-}
-
-String setDelay(String value) {
-  g_pattern_delayloop = value.toInt();
-  if(g_pattern_delayloop < 0) g_brightness = 0;
-  else if (g_pattern_delayloop > 255) g_pattern_delayloop = 255;
-
-  storageWrite(STORAGE_PATTERN_DELAY, g_pattern_delayloop);
-  return String(g_pattern_delayloop);
-}
-
-// *****************************************
 // HexaLight Name
 // *****************************************
 
 String getName() {
-  return g_hostNameString;
+  return gHostNameString;
 }
 
-// String getPalette() {
-//   return String(currentPaletteIndex);
-// }
-
-// String getPalettes() {
-//   String json = "";
-
-//   for (uint8_t i = 0; i < paletteCount; i++) {
-//     json += "\"" + paletteNames[i] + "\"";
-//     if (i < paletteCount - 1)
-//       json += ",";
-//   }
-
-//   return json;
-// }
-
-// String getAutoplay() {
-//   return String(autoplay);
-// }
-
-// String getAutoplayDuration() {
-//   return String(autoplayDuration);
-// }
-
-// String getSolidColor() {
-//   return String(solidColor.r) + "," + String(solidColor.g) + "," + String(solidColor.b);
-// }
-
-// String getCooling() {
-//   return String(cooling);
-// }
-
-// String getSparking() {
-//   return String(sparking);
-// }
-
-
-
-
-// String getTwinkleSpeed() {
-//   return String(twinkleSpeed);
-// }
-
-// String getTwinkleDensity() {
-//   return String(twinkleDensity);
-// }
-
-// String getCoolLikeIncandescent() {
-//   return String(coolLikeIncandescent);
-// }
-
-
-// // Pride Playground fields
-
-// String getSaturationBpm() {
-//   return String(saturationBpm);
-// }
-// String setSaturationBpm(String value)
-// {
-//   saturationBpm = value.toInt(); return value;
-// }
-
-// String getSaturationMin() {
-//   return String(saturationMin);
-// }
-// String setSaturationMin(String value) {
-//   saturationMin = value.toInt(); return value;
-// }
-
-// String getSaturationMax() {
-//   return String(saturationMax);
-// }
-// String setSaturationMax(String value) {
-//   saturationMax = value.toInt(); return value;
-// }
-
-// String getBrightDepthBpm() {
-//   return String(brightDepthBpm);
-// }
-// String setBrightDepthBpm(String value) {
-//   brightDepthBpm = value.toInt(); return value;
-// }
-
-// String getBrightDepthMin() {
-//   return String(brightDepthMin);
-// }
-// String setBrightDepthMin(String value) {
-//   brightDepthMin = value.toInt(); return value;
-// }
-
-// String getBrightDepthMax() {
-//   return String(brightDepthMax);
-// }
-// String setBrightDepthMax(String value) {
-//   brightDepthMax = value.toInt(); return value;
-// }
-
-// String getBrightThetaIncBpm() {
-//   return String(brightThetaIncBpm);
-// }
-// String setBrightThetaIncBpm(String value) {
-//   brightThetaIncBpm = value.toInt(); return value;
-// }
-
-// String getBrightThetaIncMin() {
-//   return String(brightThetaIncMin);
-// }
-// String setBrightThetaIncMin(String value) {
-//   brightThetaIncMin = value.toInt(); return value;
-// }
-
-// String getBrightThetaIncMax() {
-//   return String(brightThetaIncMax);
-// }
-// String setBrightThetaIncMax(String value) {
-//   brightThetaIncMax = value.toInt(); return value;
-// }
-
-// String getMsMultiplierBpm() {
-//   return String(msMultiplierBpm);
-// }
-// String setMsMultiplierBpm(String value) {
-//   msMultiplierBpm = value.toInt(); return value;
-// }
-
-// String getMsMultiplierMin() {
-//   return String(msMultiplierMin);
-// }
-// String setMsMultiplierMin(String value) {
-//   msMultiplierMin = value.toInt(); return value;
-// }
-
-// String getMsMultiplierMax() {
-//   return String(msMultiplierMax);
-// }
-// String setMsMultiplierMax(String value) {
-//   msMultiplierMax = value.toInt(); return value;
-// }
-
-// String getHueIncBpm() {
-//   return String(hueIncBpm);
-// }
-// String setHueIncBpm(String value) {
-//   hueIncBpm = value.toInt(); return value;
-// }
-
-// String getHueIncMin() {
-//   return String(hueIncMin);
-// }
-// String setHueIncMin(String value) {
-//   hueIncMin = value.toInt(); return value;
-// }
-
-// String getHueIncMax() {
-//   return String(hueIncMax);
-// }
-// String setHueIncMax(String value) {
-//   hueIncMax = value.toInt(); return value;
-// }
-
-// String getSHueBpm() {
-//   return String(sHueBpm);
-// }
-// String setSHueBpm(String value) {
-//   sHueBpm = value.toInt(); return value;
-// }
-
-// String getSHueMin() {
-//   return String(sHueMin);
-// }
-// String setSHueMin(String value) {
-//   sHueMin = value.toInt(); return value;
-// }
-
-// String getSHueMax() {
-//   return String(sHueMax);
-// }
-// String setSHueMax(String value) {
-//   sHueMax = value.toInt(); return value;
-// }
+// *****************************************
+// Fields
+// *****************************************
 
 FieldList fields = {
-    {"name", "Name", LabelFieldType, 0, 0, getName},
+    {"name", "Name", LabelFieldType, 0, 0, getName, NULL, NULL, "all"},
 
-    {"power", "Power", BooleanFieldType, 0, 1, getPower, NULL, setPower},
-    {"pattern", "Pattern", SelectFieldType, 0, PATTERNS_TOTAL, getPattern, getPatterns, setPattern},
-    {"brightness", "Brightness", NumberFieldType, 1, 255, getBrightness, NULL, setBrightness},
-    {"delay", "Delay", NumberFieldType, 1, 255, getDelay, NULL, setDelay},
-    // {"palette", "Palette", SelectFieldType, 0, paletteCount, getPalette, getPalettes},
-    {"identicalTiles", "Identical Tiles", BooleanFieldType, 0, 1, getIdenticalTiles, NULL, setIdenticalTiles},
-    {"cycle", "Cycle", BooleanFieldType, 0, 1, getCycle, NULL, setCycle},
+    {"power", "Power", BooleanFieldType, 0, 1, getPower, NULL, setPower, "all"},
+    {"pattern", "Pattern", SelectFieldType, 0, PATTERNS_TOTAL, getPattern, getPatterns, setPattern, "all"},
+    {"brightness", "Brightness", NumberFieldType, 1, 255, getBrightness, NULL, setBrightness, "all"},
+
+    {"customSection", "Pattern Specific Parameters", SectionFieldType},
+
+    {"rainbowDelay", "Delay", NumberFieldType, 1, 255, getRainbowDelay, NULL, setRainbowDelay, "rainbow"},
+    {"rainbowCycle", "Cycle Colors", BooleanFieldType, 0, 1, getRainbowCycle, NULL, setRainbowCycle, "rainbow"},
+    {"rainbowIdenticalTiles", "Identical Tiles", BooleanFieldType, 0, 1, getRainbowIdenticalTiles, NULL, setRainbowIdenticalTiles, "rainbow"},
+    
+    {"colorPaletteDelay", "Delay", NumberFieldType, 1, 255, getColorPaletteDelay, NULL, setColorPaletteDelay, "colorPalette"},
+    {"colorPaletteCycle", "Cycle Colors", BooleanFieldType, 0, 1, getColorPaletteCycle, NULL, setColorPaletteCycle, "colorPalette"},
+    {"colorPaletteIdenticalTiles", "Identical Tiles", BooleanFieldType, 0, 1, getColorPaletteIdenticalTiles, NULL, setColorPaletteIdenticalTiles, "colorPalette"},
+    {"colorPalettePalette", "Palette", SelectFieldType, 0, PALETTE_COUNT, getPalette, getPalettes, setPalette, "colorPalette"},
+
+    {"demoReelDelay", "Delay", NumberFieldType, 1, 255, getDemoReelDelay, NULL, setDemoReelDelay, "demoReel"},
+    {"demoReelCycle", "Cycle Colors", BooleanFieldType, 0, 1, getDemoReelCycle, NULL, setDemoReelCycle, "demoReel"},
+    {"demoReelGlitter", "Glitter", BooleanFieldType, 0, 1, getDemoReelGlitter, NULL, setDemoReelGlitter, "demoReel"},
+    {"demoReelGlitterChance", "Glitter Chance", NumberFieldType, 1, 255, getDemoReelGlitterChance, NULL, setDemoReelGlitterChance, "demoReel"},
+    {"demoReelHue", "Hue", NumberFieldType, 0, 255, getDemoReelHue, NULL, setDemoReelHue, "demoReel"},
+
+    {"confettiDelay", "Delay", NumberFieldType, 1, 255, getConfettiDelay, NULL, setConfettiDelay, "confetti"},
+    {"confettiCycle", "Cycle Colors", BooleanFieldType, 0, 1, getConfettiCycle, NULL, setConfettiCycle, "confetti"},
+    {"confettiDots", "Dots", NumberFieldType, 1, 20, getConfettiNumberDots, NULL, setConfettiNumberDots, "confetti"},
+    {"confettiHue", "Hue", NumberFieldType, 0, 255, getConfettiHue, NULL, setConfettiHue, "confetti"},
+
+    {"sinelonDelay", "Delay", NumberFieldType, 1, 255, getSinelonDelay, NULL, setSinelonDelay, "sinelon"},
+    {"sinelonCycle", "Cycle Colors", BooleanFieldType, 0, 1, getSinelonCycle, NULL, setSinelonCycle, "sinelon"},
+
+    {"juggleDelay", "Delay", NumberFieldType, 1, 255, getJuggleDelay, NULL, setJuggleDelay, "juggle"},
+    {"juggleCycle", "Cycle Colors", BooleanFieldType, 0, 1, getJuggleCycle, NULL, setJuggleCycle, "juggle"},
+    // {"juggleStep", "Beats Per Minute", NumberFieldType, 1, 255, getJuggleBeatsPerMinute, NULL, setJuggleBeatsPerMinute, "juggle"},
+    // {"juggleHue", "Hue", NumberFieldType, 0, 255, getJuggleHue, NULL, setJuggleHue, "juggle"},
+
+    {"bpmDelay", "Delay", NumberFieldType, 1, 255, getBpmDelay, NULL, setBpmDelay, "bpm"},
+    {"bpmCycle", "Cycle Colors", BooleanFieldType, 0, 1, getBpmCycle, NULL, setBpmCycle, "bpm"},
+    {"bpmStep", "Beats Per Minute", NumberFieldType, 1, 255, getBpmBeatsPerMinute, NULL, setBpmBeatsPerMinute, "bpm"},
+    {"bpmHue", "Hue", NumberFieldType, 0, 255, getBpmHue, NULL, setBpmHue, "bpm"},
+
+    {"cylonDelay", "Delay", NumberFieldType, 1, 255, getCylonDelay, NULL, setCylonDelay, "cylon"},
+    {"cylonCycle", "Cycle Color", BooleanFieldType, 0, 1, getCylonCycleColor, NULL, setCylonCycleColor, "cylon"},
+    {"cylonTrail", "Trail Lenght", NumberFieldType, 0, 255, getCylonTrail, NULL, setCylonTrail, "cylon"},
+
+    {"SolidRed", "Red", NumberFieldType, 0, 255, getSolidRed, NULL, setSolidRed, "solid"},
+    {"SolidGreen", "Green", NumberFieldType, 0, 255, getSolidGreen, NULL, setSolidGreen, "solid"},
+    {"SolidBlue", "Blue", NumberFieldType, 0, 255, getSolidBlue, NULL, setSolidBlue, "solid"},
+
+    {"solidEffectsDelay", "Delay", NumberFieldType, 1, 255, getSolidEffectsDelay, NULL, setSolidEffectsDelay, "solidEffects"},
+    {"solidEffectsCycle", "Cycle Background", BooleanFieldType, 0, 1, getSolidEffectsCycle, NULL, setSolidEffectsCycle, "solidEffects"},
+    {"solidEffectsDot", "Dot", BooleanFieldType, 0, 1, getSolidEffectsDot, NULL, setSolidEffectsDot, "solidEffects"},
+    {"solidEffectsDotRandom", "Random Direction", BooleanFieldType, 0, 1, getSolidEffectsDotRandom, NULL, setSolidEffectsDotRandom, "solidEffects"},
+
+    {"wholeTileDelay", "Delay", NumberFieldType, 1, 255, getWholeTileDelay, NULL, setWholeTileDelay, "wholeTile"},
+    {"wholeTileCycle", "Cycle Colors", BooleanFieldType, 0, 1, getWholeTileCycle, NULL, setWholeTileCycle, "wholeTile"},
+    {"wholeTileStep", "Step", NumberFieldType, 5, 40, getWholeTileStep, NULL, setWholeTileStep, "wholeTile"},
+    {"wholeTileHue", "Hue", NumberFieldType, 0, 255, getWholeTileHue, NULL, setWholeTileHue, "wholeTile"},
 
     // {"autoplaySection", "Autoplay", SectionFieldType},
     // {"autoplay", "Autoplay", BooleanFieldType, 0, 1, getAutoplay},

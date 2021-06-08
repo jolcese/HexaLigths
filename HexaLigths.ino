@@ -26,12 +26,16 @@
 // *****************************************
 
 #include <WiFiManager.h> 
-WiFiManager g_wifiManager;
-String g_hostNameString;
-char g_hostNameChar[64];
+WiFiManager gWifiManager;
+String gHostNameString;
+char gHostNameChar[64];
 
 #include <WebServer.h>
-WebServer g_webServer(80);
+WebServer gWebServer(80);
+
+// #include <WebSockets2_Generic.h>
+// using namespace websockets2_generic;
+// WebsocketsServer gWebSocketServer;
 
 //#include <FS.h>
 #include <SPIFFS.h>
@@ -52,29 +56,36 @@ boolean gFirstBoot = true;
 #define MAX_DELAYLOOP       1500 //1.5 sec;
 #define DELAYLOOP_STEP      0.15 //15 percent;
 
-CRGB g_leds[NUM_LEDS];
+CRGB gLeds[NUM_LEDS];
 
-uint8_t g_pattern_index;
-int16_t g_pattern_delayloop;
-uint8_t g_pattern_parameter_1;
-uint8_t g_pattern_parameter_2;
-uint8_t g_pattern_parameter_3;
-uint8_t g_pattern_parameter_4;
-boolean g_power = true;
-boolean g_identical_tiles = true;
-boolean g_cycle = true;
-int16_t g_brightness = BRIGTHNESS_FULL;
+uint8_t gPatternIndex;
+// int16_t gPatternDelayloop;
+// uint8_t gPatternParameter_1;
+// uint8_t gPatternParameter_2;
+// uint8_t gPatternParameter_3;
+// uint8_t gPatternParameter_4;
+boolean gPowerLed = true;
+// boolean gIdenticalTiles = true;
+// boolean gCycle = true;
+int16_t gBrightness = BRIGTHNESS_FULL;
 
 // *****************************************
 // Modules
 // *****************************************
+#include "Palettes.h"
 #include "PatternAround.h"
-#include "PatternColorpalette.h"
+
+#include "PatternColorPalette.h"
 #include "PatternCylon.h"
 #include "PatternDemoReel.h"
+#include "PatternDemoReelConfetti.h"
+#include "PatternDemoReelSinelon.h"
+#include "PatternDemoReelJuggle.h"
+#include "PatternDemoReelBpm.h"
 #include "PatternPacifica.h"
 #include "PatternRainbow.h"
 #include "PatternSolid.h"
+#include "PatternSolidEffects.h"
 #include "PatternWholeTile.h"
 
 #include "PatternDefinition.h"
@@ -93,17 +104,17 @@ int16_t g_brightness = BRIGTHNESS_FULL;
 
 void setup() {
   //FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(0xFFD0F0);
-  FastLED.addLeds<LED_TYPE,STRIP_DATA_PIN,COLOR_ORDER>(g_leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  FastLED.addLeds<LED_TYPE,STRIP_DATA_PIN,COLOR_ORDER>(gLeds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   //FastLED.setMaxPowerInVoltsAndMilliamps( 5, MAX_STORAGE_POWER_MILLIAMPS);
-  FastLED.setBrightness( g_brightness );
+  FastLED.setBrightness( gBrightness );
   FastLED.setDither(BINARY_DITHER); 
 
-  g_pattern_index = 0;
-  g_pattern_delayloop = g_patterns[g_pattern_index].delayloop;
-  g_pattern_parameter_1 = g_patterns[g_pattern_index].parameter1;
-  g_pattern_parameter_2 = g_patterns[g_pattern_index].parameter2;
-  g_pattern_parameter_3 = 0;
-  g_pattern_parameter_4 = 0;
+  gPatternIndex = 0;
+  // gPatternDelayloop = g_patterns[gPatternIndex].delayloop;
+  // gPatternParameter_1 = g_patterns[gPatternIndex].parameter1;
+  // gPatternParameter_2 = g_patterns[gPatternIndex].parameter2;
+  // gPatternParameter_3 = 0;
+  // gPatternParameter_4 = 0;
   
   Serial.begin(115200);
 
@@ -124,94 +135,97 @@ void setup() {
   // *****************************************
 
   //list directory
-  g_webServer.on("/status", HTTP_GET, []() {
+  gWebServer.on("/status", HTTP_GET, []() {
     Serial.println("/status(GET)");
     fsBrowserHandleStatus();
   });
   //list directory
-  g_webServer.on("/list", HTTP_GET, []() {
+  gWebServer.on("/list", HTTP_GET, []() {
     Serial.println("/list(GET)");
     fsBrowserHandleFileList();
   });
   //load editor
-  g_webServer.on("/edit", HTTP_GET, []() {
+  gWebServer.on("/edit", HTTP_GET, []() {
     Serial.println("/edit(GET)");
-    if (!fsBrowserHandleFileRead("/edit.htm")) g_webServer.send(404, "text/plain", "FileNotFound");
+    if (!fsBrowserHandleFileRead("/edit.htm")) gWebServer.send(404, "text/plain", "FileNotFound");
   });
   //create file
-  g_webServer.on("/edit", HTTP_PUT, []() {
+  gWebServer.on("/edit", HTTP_PUT, []() {
     Serial.println("/edit(PUT)");
     fsBrowserHandleFileCreate();
   });
   //delete file
-  g_webServer.on("/edit", HTTP_DELETE, []() {
+  gWebServer.on("/edit", HTTP_DELETE, []() {
     Serial.println("/edit(DELETE)");
     fsBrowserHandleFileDelete();
   });
   //first callback is called after the request has ended with all parsed arguments
   //second callback handles file uploads at that location
-  g_webServer.on("/edit", HTTP_POST, []() {
+  gWebServer.on("/edit", HTTP_POST, []() {
     Serial.println("/edit(POST)");
-    g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
-    g_webServer.send(200, "text/plain", "");
+    gWebServer.sendHeader("Access-Control-Allow-Origin", "*");
+    gWebServer.send(200, "text/plain", "");
   }, fsBrowserHandleFileUpload);
 
   // *****************************************
   // Static Serve / REST endpoints
   // *****************************************
 
-  g_webServer.on("/all", HTTP_GET, []() {
+  gWebServer.on("/all", HTTP_GET, []() {
     Serial.println("/all(GET)");
     String json = getFieldsJson(fields, FIELD_COUNT);
-    g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
-    g_webServer.send(200, "application/json", json);
+    gWebServer.sendHeader("Access-Control-Allow-Origin", "*");
+    gWebServer.send(200, "application/json", json);
   });
 
-  g_webServer.on("/patternByName", HTTP_POST, []() {
+  gWebServer.on("/patternByName", HTTP_POST, []() {
     Serial.println("/patternByName(POST)");
-    String value = g_webServer.arg("value");
+    String value = gWebServer.arg("value");
     setPatternByName(value);
-    g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
-    g_webServer.send(200, "text/plain", String(g_pattern_index));
+    gWebServer.sendHeader("Access-Control-Allow-Origin", "*");
+    gWebServer.send(200, "text/plain", String(gPatternIndex));
   });
 
-  g_webServer.on("/fieldValue", HTTP_POST, []() {
+  gWebServer.on("/fieldValue", HTTP_POST, []() {
     Serial.println("/fieldValue(POST)");
-    String name = g_webServer.arg("name");
-    String value = g_webServer.arg("value");
+    String name = gWebServer.arg("name");
+    String value = gWebServer.arg("value");
     String newValue = setFieldValue(name, value, fields, FIELD_COUNT);
-    g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
-    g_webServer.send(200, "text/json", newValue);
+    gWebServer.sendHeader("Access-Control-Allow-Origin", "*");
+    gWebServer.send(200, "text/json", newValue);
   });
 
-  g_webServer.serveStatic("/", SPIFFS, "/", "max-age=86400");
+  gWebServer.serveStatic("/", SPIFFS, "/", "max-age=86400");
 
-  g_webServer.on("/patterns/solidColor", HTTP_POST, []() {
-    Serial.println("/patterns/solidColor(POST)");
+  // gWebServer.on("/patterns/solidColor", HTTP_POST, []() {
+  //   Serial.println("/patterns/solidColor(POST)");
 
-    String r = g_webServer.arg("r");
-    String g = g_webServer.arg("g");
-    String b = g_webServer.arg("b");
+  //   String r = gWebServer.arg("r");
+  //   String g = gWebServer.arg("g");
+  //   String b = gWebServer.arg("b");
     
-    CRGB color = CRGB(r.toInt(), g.toInt(), b.toInt());
-    g_pattern_parameter_2 = r.toInt();
-    g_pattern_parameter_3 = g.toInt();
-    g_pattern_parameter_4 = b.toInt();
+  //   CRGB color = CRGB(r.toInt(), g.toInt(), b.toInt());
+  //   gPatternParameter_2 = r.toInt();
+  //   gPatternParameter_3 = g.toInt();
+  //   gPatternParameter_4 = b.toInt();
   
-    g_cycle = false;
-    g_pattern_parameter_1 = 1;
-    g_pattern_index = 21;
+  //   gCycle = false;
+  //   gPatternParameter_1 = 1;
+  //   gPatternIndex = 21;
 
-    print_led_status();
+  //   print_led_status();
 
-    g_webServer.send(200, "text/plain", String(color.r) + "," + String(color.g) + "," + String(color.b));
-    g_webServer.sendHeader("Access-Control-Allow-Origin", "*");
-  });
+  //   gWebServer.send(200, "text/plain", String(color.r) + "," + String(color.g) + "," + String(color.b));
+  //   gWebServer.sendHeader("Access-Control-Allow-Origin", "*");
+  // });
 
-  g_webServer.begin();
+  gWebServer.begin();
   Serial.println("HTTP web server started");
 
-  if(!MDNS.begin(g_hostNameChar)) {
+  // gWebSocketServer.listen(81);
+  // Serial.println("Web Socket server started");
+
+  if(!MDNS.begin(gHostNameChar)) {
       Serial.println("Error starting mDNS!");
   } else {
     Serial.println("MDNS started");
@@ -248,119 +262,119 @@ void loop() {
         print_led_status();
         break;
 
-      // Repeat pattern on every Tile
-      case 'R':
-      case 'r':
-        if (g_identical_tiles == true) {
-          g_identical_tiles = false;
-          Serial.println("Pattern will be done across all LEDS");
-        } else {
-          g_identical_tiles = true;
-          Serial.println("Pattern will be repeated on every Tile");
-        }
-        break;
+      // // Repeat pattern on every Tile
+      // case 'R':
+      // case 'r':
+      //   if (gIdenticalTiles == true) {
+      //     gIdenticalTiles = false;
+      //     Serial.println("Pattern will be done across all LEDS");
+      //   } else {
+      //     gIdenticalTiles = true;
+      //     Serial.println("Pattern will be repeated on every Tile");
+      //   }
+      //   break;
 
-      // Rotate effect
-      case 'T':
-      case 't':
-        if (g_cycle == true) {
-          g_cycle = false;
-          Serial.println("Pattern will not cycle");
-        } else {
-          g_cycle = true;
-          Serial.println("Pattern will cycle");
-        }
-        break;
+      // // Rotate effect
+      // case 'T':
+      // case 't':
+      //   if (gCycle == true) {
+      //     gCycle = false;
+      //     Serial.println("Pattern will not cycle");
+      //   } else {
+      //     gCycle = true;
+      //     Serial.println("Pattern will cycle");
+      //   }
+      //   break;
 
       // Previous pattern
       case 'Z':
       case 'z':
-        if (g_pattern_index == 0) {
-          g_pattern_index = PATTERNS_TOTAL - 1;
+        if (gPatternIndex == 0) {
+          gPatternIndex = PATTERNS_TOTAL - 1;
         } else {
-          g_pattern_index--;        
+          gPatternIndex--;        
         }
-        Serial.print(g_pattern_index);
+        Serial.print(gPatternIndex);
         Serial.print(" - ");
-        Serial.println(g_patterns[g_pattern_index].name);
-        g_pattern_delayloop = g_patterns[g_pattern_index].delayloop;
-        g_pattern_parameter_1 = g_patterns[g_pattern_index].parameter1;
-        g_pattern_parameter_2 = g_patterns[g_pattern_index].parameter2;
+        Serial.println(g_patterns[gPatternIndex].name);
+        // gPatternDelayloop = g_patterns[gPatternIndex].delayloop;
+        // gPatternParameter_1 = g_patterns[gPatternIndex].parameter1;
+        // gPatternParameter_2 = g_patterns[gPatternIndex].parameter2;
           break;
 
       // Next pattern
       case 'X':
       case 'x':
-        if (g_pattern_index == PATTERNS_TOTAL - 1) {
-          g_pattern_index = 0;
+        if (gPatternIndex == PATTERNS_TOTAL - 1) {
+          gPatternIndex = 0;
         } else {
-          g_pattern_index++;  
+          gPatternIndex++;  
         }
-        Serial.print(g_pattern_index);
+        Serial.print(gPatternIndex);
         Serial.print(" - ");
-        Serial.println(g_patterns[g_pattern_index].name);
-        g_pattern_delayloop = g_patterns[g_pattern_index].delayloop;
-        g_pattern_parameter_1 = g_patterns[g_pattern_index].parameter1;
-        g_pattern_parameter_2 = g_patterns[g_pattern_index].parameter2;
+        Serial.println(g_patterns[gPatternIndex].name);
+        // gPatternDelayloop = g_patterns[gPatternIndex].delayloop;
+        // gPatternParameter_1 = g_patterns[gPatternIndex].parameter1;
+        // gPatternParameter_2 = g_patterns[gPatternIndex].parameter2;
         break;
 
       // Decrease Brigthness
       case 'A':
       case 'a':
-        g_brightness = FastLED.getBrightness() * (1 - BRIGHTNESS_STEP);
-        if (g_brightness < 0) g_brightness = 0;
+        gBrightness = FastLED.getBrightness() * (1 - BRIGHTNESS_STEP);
+        if (gBrightness < 0) gBrightness = 0;
         Serial.print("Brightness = ");
-        Serial.println(g_brightness);
-        FastLED.setBrightness( (uint8_t) g_brightness );
+        Serial.println(gBrightness);
+        FastLED.setBrightness( (uint8_t) gBrightness );
         break;
 
       // Increase Brightness
       case 'S':
       case 's':
-        if ((uint8_t)g_brightness == (uint8_t)(FastLED.getBrightness() * (1 + BRIGHTNESS_STEP))) {
-          g_brightness++;
+        if ((uint8_t)gBrightness == (uint8_t)(FastLED.getBrightness() * (1 + BRIGHTNESS_STEP))) {
+          gBrightness++;
         } else {
-          g_brightness = FastLED.getBrightness() * (1 + BRIGHTNESS_STEP);          
+          gBrightness = FastLED.getBrightness() * (1 + BRIGHTNESS_STEP);          
         }
-        if (g_brightness > BRIGTHNESS_FULL) g_brightness = BRIGTHNESS_FULL;
+        if (gBrightness > BRIGTHNESS_FULL) gBrightness = BRIGTHNESS_FULL;
         Serial.print("Brightness = ");
-        Serial.println(g_brightness);
-        FastLED.setBrightness( (uint8_t) g_brightness );
+        Serial.println(gBrightness);
+        FastLED.setBrightness( (uint8_t) gBrightness );
         break;
 
-      // Decrease Speed
-      case 'Q':
-      case 'q':
-        g_pattern_delayloop += ((g_pattern_delayloop * DELAYLOOP_STEP) > 1 ? (g_pattern_delayloop * DELAYLOOP_STEP) : 1);
-        if (g_pattern_delayloop > MAX_DELAYLOOP) g_pattern_delayloop = MAX_DELAYLOOP;
-        Serial.print("Delay = ");
-        Serial.println(g_pattern_delayloop);
-        break;
+      // // Decrease Speed
+      // case 'Q':
+      // case 'q':
+      //   gPatternDelayloop += ((gPatternDelayloop * DELAYLOOP_STEP) > 1 ? (gPatternDelayloop * DELAYLOOP_STEP) : 1);
+      //   if (gPatternDelayloop > MAX_DELAYLOOP) gPatternDelayloop = MAX_DELAYLOOP;
+      //   Serial.print("Delay = ");
+      //   Serial.println(gPatternDelayloop);
+      //   break;
 
-      // Increase Speed
-      case 'W':
-      case 'w':
-        g_pattern_delayloop -= ((g_pattern_delayloop * DELAYLOOP_STEP) > 1 ? (g_pattern_delayloop * DELAYLOOP_STEP) : 1);
-        if (g_pattern_delayloop < 0) g_pattern_delayloop = 1;
-        Serial.print("Delay = ");
-        Serial.println(g_pattern_delayloop);
-        break;
+      // // Increase Speed
+      // case 'W':
+      // case 'w':
+      //   gPatternDelayloop -= ((gPatternDelayloop * DELAYLOOP_STEP) > 1 ? (gPatternDelayloop * DELAYLOOP_STEP) : 1);
+      //   if (gPatternDelayloop < 0) gPatternDelayloop = 1;
+      //   Serial.print("Delay = ");
+      //   Serial.println(gPatternDelayloop);
+      //   break;
 
-      // Decrease Parameter 2
-      case 'D':
-      case 'd':
-        g_pattern_parameter_2 -= 1;
-        Serial.print("Pattern Parameter 2 = ");
-        Serial.println(g_pattern_parameter_2);
-        break;
+      // // Decrease Parameter 2
+      // case 'D':
+      // case 'd':
+      //   gPatternParameter_2 -= 1;
+      //   Serial.print("Pattern Parameter 2 = ");
+      //   Serial.println(gPatternParameter_2);
+      //   break;
 
-      // Increase Parameter 2
-      case 'F':
-      case 'f':
-        g_pattern_parameter_2 += 1;
-        Serial.print("Pattern Parameter 2 = ");
-        Serial.println(g_pattern_parameter_2);
-        break;
+      // // Increase Parameter 2
+      // case 'F':
+      // case 'f':
+      //   gPatternParameter_2 += 1;
+      //   Serial.print("Pattern Parameter 2 = ");
+      //   Serial.println(gPatternParameter_2);
+      //   break;
     }
     if (incomingByte != 10) {
       Serial.print("> ");
@@ -374,19 +388,34 @@ void loop() {
     setupWifiManager();
   }
 
-  g_wifiManager.process();
-  g_webServer.handleClient();
+  gWifiManager.process();
+  gWebServer.handleClient();
   // MDNS.update();
 
-   if (g_power == false) {
-    fill_solid(g_leds, NUM_LEDS, CRGB::Black);
+  // WebsocketsClient wsClient = gWebSocketServer.accept();
+ 
+  // if (wsClient.available())
+  // {
+  //   //WebsocketsMessage msg = client.readNonBlocking();
+  //   WebsocketsMessage msg = wsClient.readBlocking();
+
+  //   // log
+  //   Serial.print("Got Message: ");
+  //   Serial.println(msg.data());
+
+  //   // return echo
+  //   wsClient.send("Echo: " + msg.data());
+
+  //   // close the connection
+  //   // wsClient.close();
+  // }
+
+   if (gPowerLed == false) {
+    fill_solid(gLeds, NUM_LEDS, CRGB::Black);
     // FIX
     FastLED.delay(1000 / FRAMES_PER_SECOND);
 
   } else {
-    g_patterns[g_pattern_index].function();
-    FastLED.delay(g_pattern_delayloop);
+    g_patterns[gPatternIndex].function();
   }
-  // FastLED.delay(1000 / FRAMES_PER_SECOND);
-
 }

@@ -1,38 +1,76 @@
-
 // *****************************************
-// 4 - Cylon
+// Cylon
 // *****************************************
 
 extern uint8_t around[];
 
+uint8_t gCylonDelay = 30; 
+boolean gCylonCycleColor = true;
+uint8_t gCylonTrail = 200; 
+
 void fadeall() { 
   for(int i = 0; i < NUM_LEDS; i++) 
   { 
-    g_leds[i].nscale8(g_pattern_parameter_2); 
+    gLeds[i].nscale8(gCylonTrail); 
   } 
 }
 
-void cylon() {
+void fCylon() {
   static uint8_t localHue = 0;
   static uint8_t localIndex = 0;
    
-  // EVERY_N_MILLISECONDS( g_pattern_delayloop ) {
-    fadeall();
-    // Set the index led to localHue
-    g_leds[around[localIndex]] = CHSV(localHue, 255, 255);
-    // Show the leds
-    FastLED.show(); 
+  fadeall();
+  // Set the index led to localHue
+  gLeds[around[localIndex]] = CHSV(localHue, 255, 255);
 
-    if (g_cycle) localHue++;
-    
-    localIndex++;
-    if (localIndex == EDGE_LEDS) {
-      localIndex = 0;
-    }
-  // }
-
-  // Wait a little bit before we loop around and do it again
-  // delay(g_pattern_delayloop);
+  if (gCylonCycleColor) localHue++;
+  
+  localIndex++;
+  if (localIndex == EDGE_LEDS) {
+    localIndex = 0;
+  }
+  FastLED.delay(gCylonDelay);
 
 }
 
+// *****************************************
+// Cycle
+// *****************************************
+
+String setCylonCycleColor(String value) {
+ gCylonCycleColor = value.toInt();
+  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  return String(gCylonCycleColor);
+}
+
+String getCylonCycleColor() {
+  return String(gCylonCycleColor);
+}
+
+// *****************************************
+// Trail
+// *****************************************
+
+String setCylonTrail(String value) {
+  gCylonTrail = value.toInt();
+  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  return String(gCylonTrail);
+}
+
+String getCylonTrail() {
+  return String(gCylonTrail);
+}
+
+// *****************************************
+// Delay
+// *****************************************
+
+String setCylonDelay(String value) {
+  gCylonDelay = value.toInt();
+  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  return String(gCylonDelay);
+}
+
+String getCylonDelay() {
+  return String(gCylonDelay);
+}

@@ -1,58 +1,57 @@
 // *****************************************
-// Solid
+// Solid Controlled
 // *****************************************
 
-void solid_background() 
+uint8_t gSolidRed = 0; 
+uint8_t gSolidGreen = 0; 
+uint8_t gSolidBlue = 255; 
+
+void fSolid() 
 {
-  static int16_t edge_index = 0;
-  static boolean clockwise_dir = false;
-  static uint8_t localHue = 0; 
+  fill_solid(gLeds, NUM_LEDS, CRGB(gSolidRed, gSolidGreen, gSolidBlue));
 
-  // EVERY_N_MILLISECONDS( g_pattern_delayloop ) {
+  FastLED.delay(10);
 
-    // param_1 = 3 makes random dot directon
-    if ((g_pattern_parameter_1 == 3) && (random(100) < g_pattern_parameter_2)) { 
-      clockwise_dir = !clockwise_dir;
-    }
-    if (clockwise_dir == true) {
-      edge_index--;
-    }
-    else 
-    {
-      edge_index++;
-    }
+}
 
-    if (edge_index >= EDGE_LEDS) {
-      edge_index = 0;
-    }
-    if (edge_index < 0) {
-      edge_index = EDGE_LEDS - 1;
-    }
+// *****************************************
+// Red
+// *****************************************
 
-    // param_1 = 1 makes color controlled by param_2
-    if (g_pattern_parameter_1 == 1) {
-      uint8_t r = g_pattern_parameter_2;
-      uint8_t g = g_pattern_parameter_3;
-      uint8_t b = g_pattern_parameter_4;
-      fill_solid(g_leds, NUM_LEDS, CRGB(r, g, b));
-    } else {
-      fill_solid(g_leds, NUM_LEDS, CHSV(localHue, 255, 255));
-    }
-    
+String setSolidRed(String value) {
+ gSolidRed = value.toInt();
+  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  return String(gSolidRed);
+}
 
-    // param_1 = 2 or 3 makes dot loop around the edge
-    if (g_pattern_parameter_1 == 2 || g_pattern_parameter_1 == 3) {
-      g_leds[around[edge_index]] = CHSV(localHue + 128, 255, 255);
-    }
+String getSolidRed() {
+  return String(gSolidRed);
+}
 
-    localHue++; 
-  // }
+// *****************************************
+// Green
+// *****************************************
 
-  // FastLED.show();  
-  // delay(g_pattern_delayloop);
-  
-  // EVERY_N_MILLISECONDS( g_pattern_delayloop ) { 
-  //   localHue++; 
-  // } 
+String setSolidGreen(String value) {
+ gSolidGreen = value.toInt();
+  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  return String(gSolidGreen);
+}
 
+String getSolidGreen() {
+  return String(gSolidGreen);
+}
+
+// *****************************************
+// Blue
+// *****************************************
+
+String setSolidBlue(String value) {
+ gSolidBlue = value.toInt();
+  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  return String(gSolidBlue);
+}
+
+String getSolidBlue() {
+  return String(gSolidBlue);
 }
