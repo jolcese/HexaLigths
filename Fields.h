@@ -91,7 +91,7 @@ String setPattern(String value)
 {
   gPatternIndex = value.toInt();;
   if (gPatternIndex >= PATTERNS_TOTAL) {
-    gPatternIndex = PATTERNS_TOTAL - 1;
+    gPatternIndex = 0;
   }
   if (gAutoplay == false) {
     storageWrite(STORAGE_PATTERN, gPatternIndex);
