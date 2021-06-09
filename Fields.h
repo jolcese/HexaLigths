@@ -25,6 +25,7 @@ String setPower(String value) {
   if (gPowerLed < 0) gPowerLed = 0;
   if (gPowerLed > 1) gPowerLed = 1;
   storageWrite(STORAGE_POWER, gPowerLed);
+  broadcastInt("power", gPowerLed);
   return String(gPowerLed);
 }
 
@@ -42,6 +43,7 @@ String setBrightness(String value) {
   if (gBrightness > 255) gBrightness = 255;
   FastLED.setBrightness( gBrightness );
   storageWrite(STORAGE_BRIGHTNESS, gBrightness);
+  broadcastInt("brightness", gBrightness);
   return String(gBrightness);
 }
 
@@ -57,6 +59,8 @@ String setAutoplay(String value) {
   if (gAutoplay < 0) gAutoplay = 0;
   if (gAutoplay > 1) gAutoplay = 1;
   storageWrite(STORAGE_AUTOPLAY, gAutoplay);
+  
+  broadcastInt("autoplay", gAutoplay);
   return String(gAutoplay);
 }
 
@@ -70,6 +74,8 @@ String setAutoplaySeconds(String value) {
   if (gAutoplaySeconds > 255) gAutoplaySeconds = 255;
   storageWrite(STORAGE_AUTOPLAY_SECONDS, gAutoplaySeconds);
   gAutoplayTimeout = millis() + (gAutoplaySeconds * 1000);
+
+  broadcastInt("autoplaySeconds", gAutoplaySeconds);
   return String(gAutoplaySeconds);
 }
 
@@ -84,16 +90,13 @@ String getAutoplaySeconds() {
 String setPattern(String value)
 {
   gPatternIndex = value.toInt();;
-  
   if (gPatternIndex >= PATTERNS_TOTAL) {
     gPatternIndex = PATTERNS_TOTAL - 1;
   }
-
   if (gAutoplay == false) {
     storageWrite(STORAGE_PATTERN, gPatternIndex);
   }
-
-  // broadcastInt("pattern", currentPatternIndex);
+  broadcastInt("pattern", gPatternIndex);
   return String(gPatternIndex);
 }
 
@@ -195,11 +198,11 @@ FieldList fields = {
     {"cylonTrail", "Trail Lenght", NumberFieldType, 0, 255, getCylonTrail, NULL, setCylonTrail, "cylon"},
 
     {"solidSection", "Solid Parameters", SectionFieldType, NULL, NULL, NULL, NULL, NULL, "solid"},
-    {"SolidRed", "Red", NumberFieldType, 0, 255, getSolidRed, NULL, setSolidRed, "solid"},
-    {"SolidGreen", "Green", NumberFieldType, 0, 255, getSolidGreen, NULL, setSolidGreen, "solid"},
-    {"SolidBlue", "Blue", NumberFieldType, 0, 255, getSolidBlue, NULL, setSolidBlue, "solid"},
+    {"solidRed", "Red", NumberFieldType, 0, 255, getSolidRed, NULL, setSolidRed, "solid"},
+    {"solidGreen", "Green", NumberFieldType, 0, 255, getSolidGreen, NULL, setSolidGreen, "solid"},
+    {"solidBlue", "Blue", NumberFieldType, 0, 255, getSolidBlue, NULL, setSolidBlue, "solid"},
 
-    {"solidSection", "Solid Parameters", SectionFieldType, NULL, NULL, NULL, NULL, NULL, "solid"},
+    {"solidEffectsSection", "Solid Parameters", SectionFieldType, NULL, NULL, NULL, NULL, NULL, "solidEffects"},
     {"solidEffectsDelay", "Delay", NumberFieldType, 1, 255, getSolidEffectsDelay, NULL, setSolidEffectsDelay, "solidEffects"},
     {"solidEffectsCycle", "Cycle Background", BooleanFieldType, 0, 1, getSolidEffectsCycle, NULL, setSolidEffectsCycle, "solidEffects"},
     {"solidEffectsDot", "Dot", BooleanFieldType, 0, 1, getSolidEffectsDot, NULL, setSolidEffectsDot, "solidEffects"},

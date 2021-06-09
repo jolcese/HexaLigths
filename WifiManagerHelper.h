@@ -1,5 +1,5 @@
 // *****************************************
-// Wifi Manager Helper
+// Wifi Helper
 // *****************************************
 
 #define WL_MAC_ADDR_LENGTH 6
@@ -77,4 +77,16 @@ void setupWifiManager() {
   else {
     Serial.println("Wi-Fi manager portal running");
   }
+}
+
+void broadcastInt(String name, uint8_t value)
+{
+  String json = "{\"name\":\"" + name + "\",\"value\":" + String(value) + "}";
+   gWebSocketsServer.broadcastTXT(json);
+}
+
+void broadcastString(String name, String value)
+{
+  String json = "{\"name\":\"" + name + "\",\"value\":\"" + String(value) + "\"}";
+   gWebSocketsServer.broadcastTXT(json);
 }

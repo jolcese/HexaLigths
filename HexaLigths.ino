@@ -40,9 +40,8 @@ char gHostName[64];
 #include <WebServer.h>
 WebServer gWebServer(80);
 
-// #include <WebSockets2_Generic.h>
-// using namespace websockets2_generic;
-// WebsocketsServer gWebSocketServer;
+#include <WebSocketsServer.h>
+WebSocketsServer gWebSocketsServer = WebSocketsServer(81);
 
 //#include <FS.h>
 #include <SPIFFS.h>
@@ -75,11 +74,12 @@ uint32_t gAutoplayTimeout = 0;
 // *****************************************
 // Modules
 // *****************************************
+#include "WifiManagerHelper.h"
+
 #include "StorageHeader.h"
 
 #include "Palettes.h"
 #include "PatternAround.h"
-
 // #include "PatternRainbow.h"
 #include "PatternColorPalette.h"
 #include "PatternCylon.h"
@@ -100,14 +100,41 @@ uint32_t gAutoplayTimeout = 0;
 #include "FieldTypes.h"
 #include "Fields.h"
 
+#include "ConsoleHelper.h"
+
 #include "Storage.h"
 
 // *****************************************
 // setup
 // *****************************************
 
-#include "ConsoleHelper.h"
-#include "WifiManagerHelper.h"
+void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
+
+  // THIS IS UNUSED
+  // WEB->ESP32 is REST
+  // ESP32->WEB is WS
+  switch(type) {
+
+    case WStype_DISCONNECTED:
+      Serial.printf("[%u] Disconnected!\n", num);
+      break;
+
+    case WStype_CONNECTED:
+      {
+        IPAddress ip = gWebSocketsServer.remoteIP(num);
+        Serial.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0], ip[1], ip[2], ip[3], payload);
+      }
+      break;
+    case WStype_TEXT:
+    case WStype_BIN:
+		case WStype_ERROR:			
+		case WStype_FRAGMENT_TEXT_START:
+		case WStype_FRAGMENT_BIN_START:
+		case WStype_FRAGMENT:
+		case WStype_FRAGMENT_FIN:
+		  break;
+  }
+}
 
 void setup() {
   //FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(0xFFD0F0);
@@ -214,8 +241,9 @@ void setup() {
   gWebServer.begin();
   Serial.println("HTTP web server started");
 
-  // gWebSocketServer.listen(81);
-  // Serial.println("Web Socket server started");
+  gWebSocketsServer.begin();
+  gWebSocketsServer.onEvent(webSocketEvent);
+  Serial.println("Web Socket server started");
 
   if(!MDNS.begin(gHostName)) {
       Serial.println("Error starting mDNS!");
@@ -323,23 +351,7 @@ void loop() {
   gWebServer.handleClient();
   // MDNS.update();
 
-  // WebsocketsClient wsClient = gWebSocketServer.accept();
- 
-  // if (wsClient.available())
-  // {
-  //   //WebsocketsMessage msg = client.readNonBlocking();
-  //   WebsocketsMessage msg = wsClient.readBlocking();
-
-  //   // log
-  //   Serial.print("Got Message: ");
-  //   Serial.println(msg.data());
-
-  //   // return echo
-  //   wsClient.send("Echo: " + msg.data());
-
-  //   // close the connection
-  //   // wsClient.close();
-  // }
+  gWebSocketsServer.loop();
 
    if (gPowerLed == false) {
     fill_solid(gLeds, NUM_LEDS, CRGB::Black);

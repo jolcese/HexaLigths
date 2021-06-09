@@ -39,7 +39,7 @@ void fCylon() {
 
 String setCylonCycleColor(String value) {
  gCylonCycleColor = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  //storageWrite(STORAGE_PATTERN_CYCLE, gCylonCycleColor);
   return String(gCylonCycleColor);
 }
 
@@ -53,7 +53,7 @@ String getCylonCycleColor() {
 
 String setCylonTrail(String value) {
   gCylonTrail = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  //storageWrite(STORAGE_PATTERN_CYCLE, gCylonTrail);
   return String(gCylonTrail);
 }
 
@@ -67,7 +67,7 @@ String getCylonTrail() {
 
 String setCylonDelay(String value) {
   gCylonDelay = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  //storageWrite(STORAGE_PATTERN_CYCLE, gCylonDelay);
   return String(gCylonDelay);
 }
 

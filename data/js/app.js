@@ -11,17 +11,22 @@ var postValueTimer = {};
 
 var ignoreColorChange = false;
 
-// var ws = new ReconnectingWebSocket("ws://" + address + ":81/", ["arduino"]);
-// ws.debug = true;
+var ws = new ReconnectingWebSocket("ws://" + address + ":81/", ["arduino"]);
+ws.debug = true;
 
-// ws.onmessage = function(evt) {
-//   if (evt.data != null)
-//   {
-//     var data = JSON.parse(evt.data);
-//     if(data == null) return;
-//     updateFieldValue(data.name, data.value);
-//   }
-// }
+ws.onmessage = function(evt) {
+  if (evt.data != null)
+  {
+    var data = JSON.parse(evt.data);
+    if(data == null) return;
+    updateFieldValue(data.name, data.value);
+    if (data.name == 'pattern') {
+      $("#form").empty();
+      setActivePattern(data.value);
+      showFields(data.value);
+    }
+  }
+}
 
 var allData = {};
 
@@ -544,6 +549,14 @@ function addStringField(field, readonly) {
 }
 
 function updateFieldValue(name, value) {
+
+  let obj = allData.find((attribute, index) => {
+    if (attribute.name === name) {
+      allData[index].value = value;
+        return true; // stop searching
+    }
+  });
+
   var group = $("#form-group-" + name);
 
   var type = group.attr("data-field-type");

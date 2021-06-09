@@ -45,7 +45,7 @@ void fColorPalette()
 
 String setColorPaletteCycle(String value) {
  gColorPaletteCycle = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  //storageWrite(STORAGE_PATTERN_CYCLE, gColorPaletteCycle);
   return String(gColorPaletteCycle);
 }
 
@@ -59,7 +59,7 @@ String getColorPaletteCycle() {
 
 String setColorPaletteIdenticalTiles(String value) {
  gColorPaletteIdenticalTiles = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  //storageWrite(STORAGE_PATTERN_CYCLE, gColorPaletteIdenticalTiles);
   return String(gColorPaletteIdenticalTiles);
 }
 
@@ -73,7 +73,7 @@ String getColorPaletteIdenticalTiles() {
 
 String setColorPaletteDelay(String value) {
  gColorPaletteDelay = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  //storageWrite(STORAGE_PATTERN_CYCLE, gColorPaletteDelay);
   return String(gColorPaletteDelay);
 }
 

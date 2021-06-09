@@ -21,6 +21,7 @@ void fSolid()
 String setSolidRed(String value) {
  gSolidRed = value.toInt();
   //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  broadcastInt("solidRed", gSolidRed);
   return String(gSolidRed);
 }
 
@@ -35,6 +36,7 @@ String getSolidRed() {
 String setSolidGreen(String value) {
  gSolidGreen = value.toInt();
   //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  broadcastInt("solidGreen", gSolidGreen);
   return String(gSolidGreen);
 }
 
@@ -49,6 +51,7 @@ String getSolidGreen() {
 String setSolidBlue(String value) {
  gSolidBlue = value.toInt();
   //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  broadcastInt("solidBlue", gSolidBlue);
   return String(gSolidBlue);
 }
 

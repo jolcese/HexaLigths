@@ -1,31 +1,31 @@
 # TODO
-* simple.htm 
-  * add websocket
-  * handle delaypostvalue
+* HTML 
+  * Handle delaypostvalue
+  * Fix Hue to ColorSlider
+  * ~~Implement websockets and emit~~
   * ~~Fix SolidColor~~
-* ~~EEPROM~~
-  * ~~Reenable~~
-  * ~~Add more variables~~
+* EEPROM
   * Add pattern specific variables
   * Provide clean mechanism (delete Magic value)
+  * ~~Reenable~~
+  * ~~Add more variables~~
 * Wifi
   * Test first connection (Does MDNS work?)
-  * provide clean mechanism
+  * Provide credentials cleanup mechanism
+  * Update firmware OTA
   * ~~MDNS~~
-  * Update 
 * Patterns
-  * ~~Autoplay~~
   * FRAMES_PER_SECOND
   * rainbow all around edge
   * ~~More pattern (twinkle fox, pride)~~
+  * ~~Autoplay~~
 * Better REST Logging
-* ~~Unify gHostNameString and gHostNameChar~~
-* Implement websockets and emit
-* ~~Per pattern variables~~
 * Remove SolidColor endpoint
 * Fix ColorFieldType
-* ~~Fix Purple and Green~~
 * palettes and palettesNames in same structure
+* ~~Fix Purple and Green~~
+* ~~Per pattern variables~~
+* ~~Unify gHostNameString and gHostNameChar~~
 * ~~Turn off red led (hardwired)~~
 * ~~Add bounds check on SetPattern and SetPalette~~
 
