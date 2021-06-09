@@ -4,7 +4,6 @@
 
 boolean gJuggleCycle = true;
 // uint8_t gJuggleHue = 0; 
-// uint8_t gJuggleBeatsPerMinute = 62; 
 uint8_t gJuggleDelay = 5; 
 
 void fJuggle() {
@@ -24,8 +23,9 @@ void fJuggle() {
 // *****************************************
 
 String setJuggleCycle(String value) {
- gJuggleCycle = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  gJuggleCycle = value.toInt();
+  storageWrite("juggleCycle");
+  broadcastInt("juggleCycle", gJuggleCycle);
   return String(gJuggleCycle);
 }
 
@@ -38,8 +38,9 @@ String getJuggleCycle() {
 // *****************************************
 
 String setJuggleDelay(String value) {
- gJuggleDelay = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  gJuggleDelay = value.toInt();
+  storageWrite("juggleDelay");
+  broadcastInt("juggleDelay", gJuggleDelay);
   return String(gJuggleDelay);
 }
 

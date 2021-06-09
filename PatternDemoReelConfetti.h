@@ -27,8 +27,9 @@ void fConfetti()
 // *****************************************
 
 String setConfettiCycle(String value) {
- gConfettiCycle = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  gConfettiCycle = value.toInt();
+  storageWrite("confettiCycle");
+  broadcastInt("confettiCycle", gConfettiCycle);  
   return String(gConfettiCycle);
 }
 
@@ -42,7 +43,8 @@ String getConfettiCycle() {
 
 String setConfettiHue(String value) {
   gConfettiHue = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  storageWrite("confettiHue");
+  broadcastInt("confettiHue", gConfettiHue);
   return String(gConfettiHue);
 }
 
@@ -56,7 +58,8 @@ String getConfettiHue() {
 
 String setConfettiNumberDots(String value) {
   gConfettiNumberDots = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  storageWrite("confettiNumberDots");
+  broadcastInt("confettiNumberDots", gConfettiNumberDots);
   return String(gConfettiNumberDots);
 }
 
@@ -69,8 +72,9 @@ String getConfettiNumberDots() {
 // *****************************************
 
 String setConfettiDelay(String value) {
- gConfettiDelay = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  gConfettiDelay = value.toInt();
+  storageWrite("confettiDelay");
+  broadcastInt("confettiDelay", gConfettiDelay);
   return String(gConfettiDelay);
 }
 

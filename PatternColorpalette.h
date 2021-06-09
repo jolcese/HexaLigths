@@ -6,6 +6,7 @@ uint8_t gColorPaletteDelay = 30;
 boolean gColorPaletteCycle = true;
 boolean gColorPaletteIdenticalTiles = true;
 TBlendType gColorPaletteBlending = LINEARBLEND; 
+uint8_t gColorPalettePaletteIndex = 0; 
 
 void fColorPalette()
 {
@@ -32,7 +33,7 @@ void fColorPalette()
   for(uint8_t hex = 0; hex < numTiles; hex++) { 
     // cidx = startIndex;
     for(uint8_t dot = 0; dot < numLeds; dot++) { 
-      gLeds[dot + hex * numLeds] = ColorFromPalette( palettes[gPaletteIndex], (hueDelta * (uint8_t)(dot + startIndex)), brightness, gColorPaletteBlending);
+      gLeds[dot + hex * numLeds] = ColorFromPalette( palettes[gColorPalettePaletteIndex], (hueDelta * (uint8_t)(dot + startIndex)), brightness, gColorPaletteBlending);
     }
   }
 
@@ -44,8 +45,9 @@ void fColorPalette()
 // *****************************************
 
 String setColorPaletteCycle(String value) {
- gColorPaletteCycle = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gColorPaletteCycle);
+  gColorPaletteCycle = value.toInt();
+  storageWrite("colorPaletteCycle");
+  broadcastInt("colorPaletteCycle", gColorPaletteCycle);
   return String(gColorPaletteCycle);
 }
 
@@ -58,8 +60,9 @@ String getColorPaletteCycle() {
 // *****************************************
 
 String setColorPaletteIdenticalTiles(String value) {
- gColorPaletteIdenticalTiles = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gColorPaletteIdenticalTiles);
+  gColorPaletteIdenticalTiles = value.toInt();
+  storageWrite("colorPaletteIdenticalTiles");
+  broadcastInt("colorPaletteIdenticalTiles", gColorPaletteIdenticalTiles);
   return String(gColorPaletteIdenticalTiles);
 }
 
@@ -72,8 +75,9 @@ String getColorPaletteIdenticalTiles() {
 // *****************************************
 
 String setColorPaletteDelay(String value) {
- gColorPaletteDelay = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gColorPaletteDelay);
+  gColorPaletteDelay = value.toInt();
+  storageWrite("colorPaletteDelay");
+  broadcastInt("colorPaletteDelay", gColorPaletteDelay);
   return String(gColorPaletteDelay);
 }
 
@@ -81,3 +85,22 @@ String getColorPaletteDelay() {
   return String(gColorPaletteDelay);
 }
 
+// *****************************************
+// Palette
+// *****************************************
+
+String setColorPalettePalette(String value)
+{
+  gColorPalettePaletteIndex = value.toInt();;
+
+  if (gColorPalettePaletteIndex >= PALETTE_COUNT)
+    gColorPalettePaletteIndex = 0;
+
+  storageWrite("colorPalettePalette");
+  broadcastInt("colorPalettePalette", gColorPalettePaletteIndex);
+  return String(gColorPalettePaletteIndex);
+
+}
+String getColorPalettePalette() {
+  return String(gColorPalettePaletteIndex);
+}

@@ -95,6 +95,8 @@ uint8_t coolLikeIncandescent = 1;
 
 // CRGBPalette16 twinkleFoxPalette = Holly_p;
 //palettes[gPaletteIndex]
+uint8_t gTwinkleFoxPaletteIndex = 0; 
+
 
 // This function is like 'triwave8', which produces a
 // symmetrical up-and-down triangle sawtooth waveform, except that this
@@ -154,7 +156,7 @@ CRGB computeOneTwinkle( uint32_t ms, uint8_t salt)
   uint8_t hue = slowcycle8 - salt;
   CRGB c;
   if( bright > 0) {
-    c = ColorFromPalette( palettes[gPaletteIndex], hue, bright, NOBLEND);
+    c = ColorFromPalette( palettes[gTwinkleFoxPaletteIndex], hue, bright, NOBLEND);
     if( coolLikeIncandescent == 1 ) {
       doCoolLikeIncandescent( c, fastcycle8);
     }
@@ -185,8 +187,8 @@ void fTwinkleFox()
   // that color is used for the background color
   CRGB bg;
   if( (gTwinkleFoxAutoBackground == true) &&
-      (palettes[gPaletteIndex][0] == palettes[gPaletteIndex][1] )) {
-    bg = palettes[gPaletteIndex][0];
+      (palettes[gTwinkleFoxPaletteIndex][0] == palettes[gTwinkleFoxPaletteIndex][1] )) {
+    bg = palettes[gTwinkleFoxPaletteIndex][0];
     uint8_t bglight = bg.getAverageLight();
     if( bglight > 64) {
       bg.nscale8_video( 16); // very bright, so scale to 1/16th
@@ -238,12 +240,33 @@ void fTwinkleFox()
 }
 
 // *****************************************
+// Palette
+// *****************************************
+
+String setTwinkleFoxPalette(String value)
+{
+  gTwinkleFoxPaletteIndex = value.toInt();;
+
+  if (gTwinkleFoxPaletteIndex >= PALETTE_COUNT)
+    gTwinkleFoxPaletteIndex = 0;
+
+  storageWrite("twinkleFoxPalette");
+  broadcastInt("twinkleFoxPalette", gTwinkleFoxPaletteIndex);
+  return String(gTwinkleFoxPaletteIndex);
+
+}
+String getTwinkleFoxPalette() {
+  return String(gTwinkleFoxPaletteIndex);
+}
+
+// *****************************************
 // Speed
 // *****************************************
 
 String setTwinkleFoxSpeed(String value) {
   gTwinkleFoxSpeed = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  storageWrite("twinkleFoxSpeed");
+  broadcastInt("twinkleFoxSpeed", gTwinkleFoxSpeed);
   return String(gTwinkleFoxSpeed);
 }
 
@@ -257,7 +280,8 @@ String getTwinkleFoxSpeed() {
 
 String setTwinkleFoxDensity(String value) {
   gTwinkleFoxDensity = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  storageWrite("twinkleFoxDensity");
+  broadcastInt("twinkleFoxDensity", gTwinkleFoxDensity);
   return String(gTwinkleFoxDensity);
 }
 
@@ -271,7 +295,8 @@ String getTwinkleFoxDensity() {
 
 String setTwinkleFoxAutoBackground(String value) {
   gTwinkleFoxAutoBackground = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  storageWrite("twinkleFoxAutoBack");
+  broadcastInt("twinkleFoxAutoBack", gTwinkleFoxAutoBackground);
   return String(gTwinkleFoxAutoBackground);
 }
 

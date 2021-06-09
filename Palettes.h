@@ -2,8 +2,6 @@
 // Palettes
 // *****************************************
 
-uint8_t gPaletteIndex = 0; 
-
 // A pure "fairy light" palette with some brightness variations
 #define HALFFAIRY ((CRGB::FairyLight & 0xFEFEFE) / 2)
 #define QUARTERFAIRY ((CRGB::FairyLight & 0xFCFCFC) / 4)
@@ -173,22 +171,6 @@ const String paletteNames[PALETTE_COUNT] = {
     "Holly",
     "Fairy Light"
 }; 
-
-String setPalette(String value)
-{
-  gPaletteIndex = value.toInt();;
-
-  if (gPaletteIndex >= PALETTE_COUNT)
-    gPaletteIndex = PALETTE_COUNT - 1;
-
-  storageWrite(STORAGE_PALETTE, gPaletteIndex);
-
-  return String(gPaletteIndex);
-
-}
-String getPalette() {
-  return String(gPaletteIndex);
-}
 
 String getPalettes() {
   String json = "";

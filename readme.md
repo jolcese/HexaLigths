@@ -5,8 +5,8 @@
   * ~~Implement websockets and emit~~
   * ~~Fix SolidColor~~
 * EEPROM
-  * Add pattern specific variables
   * Provide clean mechanism (delete Magic value)
+  * ~~Add pattern specific variables~~
   * ~~Reenable~~
   * ~~Add more variables~~
 * Wifi
@@ -17,6 +17,7 @@
 * Patterns
   * FRAMES_PER_SECOND
   * rainbow all around edge
+  * ~~Add independent palette to different patterns~~
   * ~~More pattern (twinkle fox, pride)~~
   * ~~Autoplay~~
 * Better REST Logging

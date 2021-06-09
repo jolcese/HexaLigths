@@ -26,8 +26,9 @@ void fWholeTile()
 // *****************************************
 
 String setWholeTileCycle(String value) {
- gWholeTileCycle = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  gWholeTileCycle = value.toInt();
+  storageWrite("wholeTileCycle");
+  broadcastInt("wholeTileCycle", gWholeTileCycle);
   return String(gWholeTileCycle);
 }
 
@@ -40,8 +41,9 @@ String getWholeTileCycle() {
 // *****************************************
 
 String setWholeTileHue(String value) {
- gWholeTileHue = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  gWholeTileHue = value.toInt();
+  storageWrite("wholeTileHue");
+  broadcastInt("wholeTileHue", gWholeTileHue);
   return String(gWholeTileHue);
 }
 
@@ -54,8 +56,9 @@ String getWholeTileHue() {
 // *****************************************
 
 String setWholeTileStep(String value) {
- gWholeTileStep = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  gWholeTileStep = value.toInt();
+  storageWrite("wholeTileStep");
+  broadcastInt("wholeTileStep", gWholeTileStep);
   return String(gWholeTileStep);
 }
 
@@ -68,8 +71,9 @@ String getWholeTileStep() {
 // *****************************************
 
 String setWholeTileDelay(String value) {
- gWholeTileDelay = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  gWholeTileDelay = value.toInt();
+  storageWrite("wholeTileDelay");
+  broadcastInt("wholeTileDelay", gWholeTileDelay);
   return String(gWholeTileDelay);
 }
 

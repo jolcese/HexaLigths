@@ -31,8 +31,9 @@ void fDemoReel()
 // *****************************************
 
 String setDemoReelCycle(String value) {
- gDemoReelCycle = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gDemoReelCycle);
+  gDemoReelCycle = value.toInt();
+  storageWrite("demoReelCycle");
+  broadcastInt("demoReelCycle", gDemoReelCycle);
   return String(gDemoReelCycle);
 }
 
@@ -46,7 +47,6 @@ String getDemoReelCycle() {
 
 String setDemoReelHue(String value) {
   gDemoReelHue = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gDemoReelHue);
   return String(gDemoReelHue);
 }
 
@@ -59,8 +59,9 @@ String getDemoReelHue() {
 // *****************************************
 
 String setDemoReelGlitter(String value) {
- gDemoReelGlitter = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gDemoReelGlitter);
+  gDemoReelGlitter = value.toInt();
+  storageWrite("demoReelGlitter");
+  broadcastInt("demoReelGlitter", gDemoReelGlitter);
   return String(gDemoReelGlitter);
 }
 
@@ -74,7 +75,8 @@ String getDemoReelGlitter() {
 
 String setDemoReelGlitterChance(String value) {
   gDemoReelGlitterChance = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gDemoReelGlitterChance);
+  storageWrite("demoReelGlitterChance");
+  broadcastInt("demoReelGlitterChance", gDemoReelGlitterChance);
   return String(gDemoReelGlitterChance);
 }
 
@@ -87,8 +89,9 @@ String getDemoReelGlitterChance() {
 // *****************************************
 
 String setDemoReelDelay(String value) {
- gDemoReelDelay = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gDemoReelDelay);
+  gDemoReelDelay = value.toInt();
+  storageWrite("demoReelGlitterDelay");
+  broadcastInt("demoReelGlitterDelay", gDemoReelDelay);
   return String(gDemoReelDelay);
 }
 

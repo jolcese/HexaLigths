@@ -2,42 +2,122 @@
 // Storage
 // *****************************************
 
-uint8_t storageWrite(uint8_t storageItem, uint8_t value) {
-  EEPROM.write(storageItem, value);
-  EEPROM.commit();
+boolean storageNoWriteFirst = true;
 
-  Serial.printf("EEPROM.write(%d, %d)", storageItem, value);
-  Serial.println();
+uint8_t storageWrite(String name) {
+
+  uint8_t eepromIndex = 255;
+  uint8_t value;
+
+  if (storageNoWriteFirst == true) return(0);
+
+  for (uint8_t i = 0 ; i < FIELD_COUNT ; i++) {
+    if (fields[i].name == name) {
+      eepromIndex = fields[i].eepromIndex;
+      value = fields[i].getValue().toInt();
+      break;
+    }
+  }
+  if (eepromIndex != 255) {
+    Serial.print("storageWrite(name=");
+    Serial.print(name);
+    Serial.printf(", eepromIndex=%d, value=%d)", eepromIndex, value);
+    Serial.println();
+    Serial.printf("storageWrite: EEPROM.write");
+    Serial.println();
+    EEPROM.write(eepromIndex, value);
+    EEPROM.commit();
+  } else {
+    Serial.printf("storageWrite(name=%s) FIELD NOT FOUND", name);
+    Serial.println();
+  }
 }
 
-uint8_t storageRead(uint8_t storageItem) {
-  uint8_t value = EEPROM.read(storageItem);
-  Serial.printf("EEPROM.read(%d) = %d", storageItem, value);
+uint8_t storageRead(String name) {
+
+  uint8_t eepromIndex = 255;
+  uint8_t value = 0;
+  
+  for (uint8_t i = 0 ; i < FIELD_COUNT ; i++) {
+    if (fields[i].name == name) {
+      eepromIndex = fields[i].eepromIndex;
+      break;
+    }
+  }
+  if (eepromIndex != 255) {
+    value = EEPROM.read(eepromIndex);
+    Serial.print("storageRead(name=");
+    Serial.print(name);
+    Serial.printf(", eepromIndex=%d, value=%d)", eepromIndex, value);
+    Serial.println();
+  } else {
+    Serial.printf("storageRead(name=%s) FIELD NOT FOUND", name);
+    Serial.println();
+  }
+
+  return value;
+}
+
+uint8_t setValueFromStorage(String name) {
+
+  uint8_t value = storageRead(name);
+
+  for (uint8_t i = 0 ; i < FIELD_COUNT ; i++) {
+    if (fields[i].name == name) {
+      fields[i].setValue(String(value));
+      break;
+    }
+  }
+  Serial.print("setValueFromStorage(name=");
+  Serial.print(name);
+  Serial.printf(", value=%d)", value);
   Serial.println();
+
+  return value;
+}
+
+uint8_t initStorageFromValue(String name) {
+
+  uint8_t value;
+
+  for (uint8_t i = 0 ; i < FIELD_COUNT ; i++) {
+    if (fields[i].name == name) {
+      value = fields[i].getValue().toInt();
+      Serial.print("initStorageFromValue(name=");
+      Serial.print(name);
+      Serial.printf(", value=%d)", value);
+      Serial.println();
+      Serial.printf("initStorageFromValue: EEPROM.write");
+      Serial.println();
+      EEPROM.write(fields[i].eepromIndex, value);
+      EEPROM.commit();
+      break;
+    }
+  }
+
   return value;
 }
 
 void storageLoadSettings() {
   EEPROM.begin(512);
 
-  if (storageRead(STORAGE_INIT) == STORAGE_MAGICAL) {
+  if (EEPROM.read(STORAGE_INIT) == STORAGE_MAGICAL) {
 
-    setPower(String(EEPROM.read(STORAGE_POWER)));
-    setBrightness(String(EEPROM.read(STORAGE_BRIGHTNESS)));
-    setPattern(String(EEPROM.read(STORAGE_PATTERN)));
-    setAutoplay(String(EEPROM.read(STORAGE_AUTOPLAY)));
-    setAutoplaySeconds(String(EEPROM.read(STORAGE_AUTOPLAY_SECONDS)));
-    setPalette(String(EEPROM.read(STORAGE_PALETTE)));
-
+    for (uint8_t i = 0 ; i < FIELD_COUNT ; i++) {
+      if (fields[i].eepromIndex != 255) {
+        setValueFromStorage(fields[i].name);
+      }
+    }
+    storageNoWriteFirst = false;
   } else {
-    storageWrite(STORAGE_POWER, getPower().toInt());
-    storageWrite(STORAGE_BRIGHTNESS, getBrightness().toInt());
-    storageWrite(STORAGE_PATTERN, getPattern().toInt());
-    storageWrite(STORAGE_AUTOPLAY, getAutoplay().toInt());
-    storageWrite(STORAGE_AUTOPLAY_SECONDS, getAutoplaySeconds().toInt());
-    storageWrite(STORAGE_PALETTE, getPalette().toInt());
-
-    storageWrite(STORAGE_INIT, STORAGE_MAGICAL);    
+    storageNoWriteFirst = false;
+    for (uint8_t i = 0 ; i < FIELD_COUNT ; i++) {
+      if (fields[i].eepromIndex != 255) {
+          initStorageFromValue(fields[i].name);
+      }
+    }
+    EEPROM.write(0, STORAGE_MAGICAL);
+    EEPROM.commit();
   }
 }
 

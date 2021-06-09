@@ -82,11 +82,11 @@ void setupWifiManager() {
 void broadcastInt(String name, uint8_t value)
 {
   String json = "{\"name\":\"" + name + "\",\"value\":" + String(value) + "}";
-   gWebSocketsServer.broadcastTXT(json);
+  gWebSocketsServer.broadcastTXT(json);
 }
 
 void broadcastString(String name, String value)
 {
   String json = "{\"name\":\"" + name + "\",\"value\":\"" + String(value) + "\"}";
-   gWebSocketsServer.broadcastTXT(json);
+  gWebSocketsServer.broadcastTXT(json);
 }

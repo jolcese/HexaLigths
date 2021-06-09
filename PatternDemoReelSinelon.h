@@ -28,8 +28,9 @@ void fSinelon()
 // *****************************************
 
 String setSinelonCycle(String value) {
- gSinelonCycle = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  gSinelonCycle = value.toInt();
+  storageWrite("sinelonCycle");
+  broadcastInt("sinelonCycle", gSinelonCycle);
   return String(gSinelonCycle);
 }
 
@@ -42,8 +43,9 @@ String getSinelonCycle() {
 // *****************************************
 
 String setSinelonDelay(String value) {
- gSinelonDelay = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  gSinelonDelay = value.toInt();
+  storageWrite("sinelonDelay");
+  broadcastInt("sinelonDelay", gSinelonDelay);
   return String(gSinelonDelay);
 }
 

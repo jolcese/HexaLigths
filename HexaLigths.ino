@@ -5,6 +5,7 @@
 // Based on ESP8266 Fastled Webserver by Jason Coon: https://github.com/jasoncoon/esp8266-fastled-webserver
 // Based on ColorTwinkles by Mark Kriegsman: https://gist.github.com/kriegsman/5408ecd397744ba0393e
 // Based on TwinkleFOX by Mark Kriegsman: https://gist.github.com/kriegsman/756ea6dcae8e30845b5a
+// Based on DemoReel100 by FastLED: https://github.com/FastLED/FastLED/blob/master/examples/DemoReel100/DemoReel100.ino
 
 // *****************************************
 // HW Definition
@@ -75,7 +76,6 @@ uint32_t gAutoplayTimeout = 0;
 // Modules
 // *****************************************
 #include "WifiManagerHelper.h"
-
 #include "StorageHeader.h"
 
 #include "Palettes.h"
@@ -101,7 +101,6 @@ uint32_t gAutoplayTimeout = 0;
 #include "Fields.h"
 
 #include "ConsoleHelper.h"
-
 #include "Storage.h"
 
 // *****************************************

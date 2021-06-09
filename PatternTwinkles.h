@@ -6,6 +6,7 @@ uint8_t gTwinklesDelay = 30;
 uint8_t gTwinklesDensity = 255; 
 uint8_t gTwinklesFadeIn = 32; 
 uint8_t gTwinklesFadeOut = 20; 
+uint8_t gTwinklesPaletteIndex = 0; 
 
 #define STARTING_BRIGHTNESS 64
 // #define FADE_IN_SPEED       32
@@ -86,7 +87,7 @@ void fTwinkles()
     if ( random8() < gTwinklesDensity ) {
         int pos = random16(NUM_LEDS);
         if ( !gLeds[pos]) {
-        gLeds[pos] = ColorFromPalette( palettes[gPaletteIndex], random8(), STARTING_BRIGHTNESS, NOBLEND);
+        gLeds[pos] = ColorFromPalette( palettes[gTwinklesPaletteIndex], random8(), STARTING_BRIGHTNESS, NOBLEND);
         setPixelDirection(pos, GETTING_BRIGHTER);
         }
     }
@@ -99,8 +100,9 @@ void fTwinkles()
 // *****************************************
 
 String setTwinklesDelay(String value) {
- gTwinklesDelay = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  gTwinklesDelay = value.toInt();
+  storageWrite("twinklesDelay");
+  broadcastInt("twinklesDelay", gWholeTileDelay);
   return String(gTwinklesDelay);
 }
 
@@ -109,12 +111,33 @@ String getTwinklesDelay() {
 }
 
 // *****************************************
+// Palette
+// *****************************************
+
+String setTwinklesPalette(String value)
+{
+  gTwinklesPaletteIndex = value.toInt();;
+
+  if (gTwinklesPaletteIndex >= PALETTE_COUNT)
+    gTwinklesPaletteIndex = 0;
+
+  storageWrite("twinklesPalette");
+  broadcastInt("twinklesPalette", gTwinklesPaletteIndex);
+  return String(gTwinklesPaletteIndex);
+
+}
+String getTwinklesPalette() {
+  return String(gTwinklesPaletteIndex);
+}
+
+// *****************************************
 // Fade In Speed
 // *****************************************
 
 String setTwinklesFadeIn(String value) {
   gTwinklesFadeIn = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  storageWrite("twinklesFadeIn");
+  broadcastInt("twinklesFadeIn", gTwinklesFadeIn);
   return String(gTwinklesFadeIn);
 }
 
@@ -128,7 +151,8 @@ String getTwinklesFadeIn() {
 
 String setTwinklesFadeOut(String value) {
   gTwinklesFadeOut = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  storageWrite("twinklesFadeOut");
+  broadcastInt("twinklesFadeOut", gTwinklesFadeOut);
   return String(gTwinklesFadeOut);
 }
 
@@ -142,7 +166,8 @@ String getTwinklesFadeOut() {
 
 String setTwinklesDensity(String value) {
   gTwinklesDensity = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  storageWrite("twinklesDensity");
+  broadcastInt("twinklesDensity", gTwinklesDensity);
   return String(gTwinklesDensity);
 }
 

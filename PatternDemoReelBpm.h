@@ -27,8 +27,9 @@ void fBPM()
 // *****************************************
 
 String setBpmCycle(String value) {
- gBpmCycle = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  gBpmCycle = value.toInt();
+  storageWrite("bpmCycle");
+  broadcastInt("bpmCycle", gBpmCycle);
   return String(gBpmCycle);
 }
 
@@ -42,7 +43,8 @@ String getBpmCycle() {
 
 String setBpmHue(String value) {
   gBpmHue = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  storageWrite("bpmHue");
+  broadcastInt("bpmHue", gBpmHue);
   return String(gBpmHue);
 }
 
@@ -56,7 +58,8 @@ String getBpmHue() {
 
 String setBpmBeatsPerMinute(String value) {
   gBpmBeatsPerMinute = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  storageWrite("bpmStep");
+  broadcastInt("bpmStep", gBpmBeatsPerMinute);
   return String(gBpmBeatsPerMinute);
 }
 
@@ -69,8 +72,9 @@ String getBpmBeatsPerMinute() {
 // *****************************************
 
 String setBpmDelay(String value) {
- gBpmDelay = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  gBpmDelay = value.toInt();
+  storageWrite("bpmDelay");
+  broadcastInt("bpmDelay", gBpmDelay);
   return String(gBpmDelay);
 }
 

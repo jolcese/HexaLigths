@@ -50,8 +50,9 @@ void fSolidEffects()
 // *****************************************
 
 String setSolidEffectsCycle(String value) {
- gSolidEffectsCycleBackground = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  gSolidEffectsCycleBackground = value.toInt();
+  storageWrite("solidEffectsCycle");
+  broadcastInt("solidEffectsCycle", gSolidEffectsCycleBackground);
   return String(gSolidEffectsCycleBackground);
 }
 
@@ -64,8 +65,9 @@ String getSolidEffectsCycle() {
 // *****************************************
 
 String setSolidEffectsDot(String value) {
- gSolidEffectsDot = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  gSolidEffectsDot = value.toInt();
+  storageWrite("solidEffectsDot");
+  broadcastInt("solidEffectsDot", gSolidEffectsDot);
   return String(gSolidEffectsDot);
 }
 
@@ -78,8 +80,9 @@ String getSolidEffectsDot() {
 // *****************************************
 
 String setSolidEffectsDotRandom(String value) {
- gSolidEffectsDotRandom = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  gSolidEffectsDotRandom = value.toInt();
+  storageWrite("solidEffectsDotRandom");
+  broadcastInt("solidEffectsDotRandom", gSolidEffectsDotRandom);
   return String(gSolidEffectsDotRandom);
 }
 
@@ -92,8 +95,9 @@ String getSolidEffectsDotRandom() {
 // *****************************************
 
 String setSolidEffectsDelay(String value) {
- gSolidEffectsDelay = value.toInt();
-  //storageWrite(STORAGE_PATTERN_CYCLE, gPowerLed);
+  gSolidEffectsDelay = value.toInt();
+  storageWrite("solidEffectsDelay");
+  broadcastInt("solidEffectsDelay", gSolidEffectsDelay);
   return String(gSolidEffectsDelay);
 }
 
