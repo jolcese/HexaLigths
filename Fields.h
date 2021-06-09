@@ -16,17 +16,14 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// uint8_t power = 1;
-// uint8_t brightness = brightnessMap[brightnessIndex];
-
 // *****************************************
 // Power
 // *****************************************
 
 String setPower(String value) {
- gPowerLed = value.toInt();
-//  if(gPowerLed < 0) gPowerLed = 0;
-//  else if (power > 1) power = 1;
+  gPowerLed = value.toInt();
+  if (gPowerLed < 0) gPowerLed = 0;
+  if (gPowerLed > 1) gPowerLed = 1;
   storageWrite(STORAGE_POWER, gPowerLed);
   return String(gPowerLed);
 }
@@ -41,17 +38,43 @@ String getPower() {
 
 String setBrightness(String value) {
   gBrightness = value.toInt();
-  if(gBrightness < 0) gBrightness = 0;
-  else if (gBrightness > 255) gBrightness = 255;
+  if (gBrightness < 0) gBrightness = 0;
+  if (gBrightness > 255) gBrightness = 255;
   FastLED.setBrightness( gBrightness );
-
   storageWrite(STORAGE_BRIGHTNESS, gBrightness);
-
   return String(gBrightness);
 }
 
 String getBrightness() {
   return String(gBrightness);
+}
+// *****************************************
+// Autoplay
+// *****************************************
+
+String setAutoplay(String value) {
+  gAutoplay = value.toInt();
+  if (gAutoplay < 0) gAutoplay = 0;
+  if (gAutoplay > 1) gAutoplay = 1;
+  storageWrite(STORAGE_AUTOPLAY, gAutoplay);
+  return String(gAutoplay);
+}
+
+String getAutoplay() {
+  return String(gAutoplay);
+}
+
+String setAutoplaySeconds(String value) {
+  gAutoplaySeconds = value.toInt();
+  if (gAutoplaySeconds < 0) gAutoplaySeconds = 0;
+  if (gAutoplaySeconds > 255) gAutoplaySeconds = 255;
+  storageWrite(STORAGE_AUTOPLAY_SECONDS, gAutoplaySeconds);
+  gAutoplayTimeout = millis() + (gAutoplaySeconds * 1000);
+  return String(gAutoplaySeconds);
+}
+
+String getAutoplaySeconds() {
+  return String(gAutoplaySeconds);
 }
 
 // *****************************************
@@ -61,15 +84,14 @@ String getBrightness() {
 String setPattern(String value)
 {
   gPatternIndex = value.toInt();;
-
-  if (gPatternIndex >= PATTERNS_TOTAL)
+  
+  if (gPatternIndex >= PATTERNS_TOTAL) {
     gPatternIndex = PATTERNS_TOTAL - 1;
+  }
 
-  // if (autoplay == 0) {
-  //   EEPROM.write(1, currentPatternIndex);
-  //   EEPROM.commit();
-  // }
-  storageWrite(STORAGE_PATTERN, gPatternIndex);
+  if (gAutoplay == false) {
+    storageWrite(STORAGE_PATTERN, gPatternIndex);
+  }
 
   // broadcastInt("pattern", currentPatternIndex);
   return String(gPatternIndex);
@@ -124,65 +146,79 @@ FieldList fields = {
     {"pattern", "Pattern", SelectFieldType, 0, PATTERNS_TOTAL, getPattern, getPatterns, setPattern, "all"},
     {"brightness", "Brightness", NumberFieldType, 1, 255, getBrightness, NULL, setBrightness, "all"},
 
-    {"customSection", "Pattern Specific Parameters", SectionFieldType},
+    {"autoplaySection", "Autoplay", SectionFieldType, NULL, NULL, NULL, NULL, NULL, "all"},
+    {"autoplay", "Autoplay Enabled", BooleanFieldType, 0, 1, getAutoplay, NULL, setAutoplay, "all"},
+    {"autoplaySeconds", "Duration (Seconds)", NumberFieldType, 1, 255, getAutoplaySeconds, NULL, setAutoplaySeconds, "all"},
 
     // {"rainbowDelay", "Delay", NumberFieldType, 1, 255, getRainbowDelay, NULL, setRainbowDelay, "rainbow"},
     // {"rainbowCycle", "Cycle Colors", BooleanFieldType, 0, 1, getRainbowCycle, NULL, setRainbowCycle, "rainbow"},
     // {"rainbowIdenticalTiles", "Identical Tiles", BooleanFieldType, 0, 1, getRainbowIdenticalTiles, NULL, setRainbowIdenticalTiles, "rainbow"},
     
+    {"colorPaletteSection", "Color Palette Parameters", SectionFieldType, NULL, NULL, NULL, NULL, NULL, "colorPalette"},
     {"colorPaletteDelay", "Delay", NumberFieldType, 1, 255, getColorPaletteDelay, NULL, setColorPaletteDelay, "colorPalette"},
     {"colorPaletteCycle", "Cycle Colors", BooleanFieldType, 0, 1, getColorPaletteCycle, NULL, setColorPaletteCycle, "colorPalette"},
     {"colorPaletteIdenticalTiles", "Identical Tiles", BooleanFieldType, 0, 1, getColorPaletteIdenticalTiles, NULL, setColorPaletteIdenticalTiles, "colorPalette"},
     {"colorPalettePalette", "Palette", SelectFieldType, 0, PALETTE_COUNT, getPalette, getPalettes, setPalette, "colorPalette"},
 
+    {"demoReelSection", "Demo Reel Parameters", SectionFieldType, NULL, NULL, NULL, NULL, NULL, "demoReel"},
     {"demoReelDelay", "Delay", NumberFieldType, 1, 255, getDemoReelDelay, NULL, setDemoReelDelay, "demoReel"},
     {"demoReelCycle", "Cycle Colors", BooleanFieldType, 0, 1, getDemoReelCycle, NULL, setDemoReelCycle, "demoReel"},
     {"demoReelGlitter", "Glitter", BooleanFieldType, 0, 1, getDemoReelGlitter, NULL, setDemoReelGlitter, "demoReel"},
     {"demoReelGlitterChance", "Glitter Chance", NumberFieldType, 1, 255, getDemoReelGlitterChance, NULL, setDemoReelGlitterChance, "demoReel"},
     {"demoReelHue", "Hue", NumberFieldType, 0, 255, getDemoReelHue, NULL, setDemoReelHue, "demoReel"},
 
+    {"confettiSection", "Confetti Parameters", SectionFieldType, NULL, NULL, NULL, NULL, NULL, "confetti"},
     {"confettiDelay", "Delay", NumberFieldType, 1, 255, getConfettiDelay, NULL, setConfettiDelay, "confetti"},
     {"confettiCycle", "Cycle Colors", BooleanFieldType, 0, 1, getConfettiCycle, NULL, setConfettiCycle, "confetti"},
     {"confettiDots", "Dots", NumberFieldType, 1, 20, getConfettiNumberDots, NULL, setConfettiNumberDots, "confetti"},
     {"confettiHue", "Hue", NumberFieldType, 0, 255, getConfettiHue, NULL, setConfettiHue, "confetti"},
 
+    {"sinelonSection", "Sinelon Parameters", SectionFieldType, NULL, NULL, NULL, NULL, NULL, "sinelon"},
     {"sinelonDelay", "Delay", NumberFieldType, 1, 255, getSinelonDelay, NULL, setSinelonDelay, "sinelon"},
     {"sinelonCycle", "Cycle Colors", BooleanFieldType, 0, 1, getSinelonCycle, NULL, setSinelonCycle, "sinelon"},
 
+    {"juggleSection", "Juggle Parameters", SectionFieldType, NULL, NULL, NULL, NULL, NULL, "juggle"},
     {"juggleDelay", "Delay", NumberFieldType, 1, 255, getJuggleDelay, NULL, setJuggleDelay, "juggle"},
     {"juggleCycle", "Cycle Colors", BooleanFieldType, 0, 1, getJuggleCycle, NULL, setJuggleCycle, "juggle"},
     // {"juggleStep", "Beats Per Minute", NumberFieldType, 1, 255, getJuggleBeatsPerMinute, NULL, setJuggleBeatsPerMinute, "juggle"},
     // {"juggleHue", "Hue", NumberFieldType, 0, 255, getJuggleHue, NULL, setJuggleHue, "juggle"},
 
+    {"bpmSection", "BPM Parameters", SectionFieldType, NULL, NULL, NULL, NULL, NULL, "bpm"},
     {"bpmDelay", "Delay", NumberFieldType, 1, 255, getBpmDelay, NULL, setBpmDelay, "bpm"},
     {"bpmCycle", "Cycle Colors", BooleanFieldType, 0, 1, getBpmCycle, NULL, setBpmCycle, "bpm"},
     {"bpmStep", "Beats Per Minute", NumberFieldType, 1, 255, getBpmBeatsPerMinute, NULL, setBpmBeatsPerMinute, "bpm"},
     {"bpmHue", "Hue", NumberFieldType, 0, 255, getBpmHue, NULL, setBpmHue, "bpm"},
 
+    {"cylonSection", "Cylon Parameters", SectionFieldType, NULL, NULL, NULL, NULL, NULL, "cylon"},
     {"cylonDelay", "Delay", NumberFieldType, 1, 255, getCylonDelay, NULL, setCylonDelay, "cylon"},
     {"cylonCycle", "Cycle Color", BooleanFieldType, 0, 1, getCylonCycleColor, NULL, setCylonCycleColor, "cylon"},
     {"cylonTrail", "Trail Lenght", NumberFieldType, 0, 255, getCylonTrail, NULL, setCylonTrail, "cylon"},
 
+    {"solidSection", "Solid Parameters", SectionFieldType, NULL, NULL, NULL, NULL, NULL, "solid"},
     {"SolidRed", "Red", NumberFieldType, 0, 255, getSolidRed, NULL, setSolidRed, "solid"},
     {"SolidGreen", "Green", NumberFieldType, 0, 255, getSolidGreen, NULL, setSolidGreen, "solid"},
     {"SolidBlue", "Blue", NumberFieldType, 0, 255, getSolidBlue, NULL, setSolidBlue, "solid"},
 
+    {"solidSection", "Solid Parameters", SectionFieldType, NULL, NULL, NULL, NULL, NULL, "solid"},
     {"solidEffectsDelay", "Delay", NumberFieldType, 1, 255, getSolidEffectsDelay, NULL, setSolidEffectsDelay, "solidEffects"},
     {"solidEffectsCycle", "Cycle Background", BooleanFieldType, 0, 1, getSolidEffectsCycle, NULL, setSolidEffectsCycle, "solidEffects"},
     {"solidEffectsDot", "Dot", BooleanFieldType, 0, 1, getSolidEffectsDot, NULL, setSolidEffectsDot, "solidEffects"},
     {"solidEffectsDotRandom", "Random Direction", BooleanFieldType, 0, 1, getSolidEffectsDotRandom, NULL, setSolidEffectsDotRandom, "solidEffects"},
 
+    {"wholeTileSection", "Whole Tile Parameters", SectionFieldType, NULL, NULL, NULL, NULL, NULL, "wholeTile"},
     {"wholeTileDelay", "Delay", NumberFieldType, 1, 255, getWholeTileDelay, NULL, setWholeTileDelay, "wholeTile"},
     {"wholeTileCycle", "Cycle Colors", BooleanFieldType, 0, 1, getWholeTileCycle, NULL, setWholeTileCycle, "wholeTile"},
     {"wholeTileStep", "Step", NumberFieldType, 5, 40, getWholeTileStep, NULL, setWholeTileStep, "wholeTile"},
     {"wholeTileHue", "Hue", NumberFieldType, 0, 255, getWholeTileHue, NULL, setWholeTileHue, "wholeTile"},
 
+    {"twinklesSection", "Twinkle Parameters", SectionFieldType, NULL, NULL, NULL, NULL, NULL, "twinkles"},
     {"twinklesDelay", "Delay", NumberFieldType, 1, 255, getTwinklesDelay, NULL, setTwinklesDelay, "twinkles"},
     {"twinklesPalette", "Palette", SelectFieldType, 0, PALETTE_COUNT, getPalette, getPalettes, setPalette, "twinkles"},
     {"twinklesFadeIn", "Fade In Speed", NumberFieldType, 0, 255, getTwinklesFadeIn, NULL, setTwinklesFadeIn, "twinkles"},
     {"twinklesFadeOut", "Fade Out Speed", NumberFieldType, 0, 255, getTwinklesFadeOut, NULL, setTwinklesFadeOut, "twinkles"},
     {"twinklesDensity", "Density", NumberFieldType, 1, 255, getTwinklesDensity, NULL, setTwinklesDensity, "twinkles"},
 
+    {"twinkleFoxSection", "Twinkle Fox Parameters", SectionFieldType, NULL, NULL, NULL, NULL, NULL, "twinkleFox"},
     {"twinkleFoxSpeed", "Speed", NumberFieldType, 0, 8, getTwinkleFoxSpeed, NULL, setTwinkleFoxSpeed, "twinkleFox"},
     {"twinkleFoxDensity", "Density", NumberFieldType, 0, 8, getTwinkleFoxDensity, NULL, setTwinkleFoxDensity, "twinkleFox"},
     {"twinkleFoxPalette", "Palette", SelectFieldType, 0, PALETTE_COUNT, getPalette, getPalettes, setPalette, "twinkleFox"},

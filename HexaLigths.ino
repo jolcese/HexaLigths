@@ -69,10 +69,15 @@ CRGB gLeds[NUM_LEDS];
 uint8_t gPatternIndex = 3;
 boolean gPowerLed = true;
 int16_t gBrightness = BRIGTHNESS_FULL;
+boolean gAutoplay = false;
+uint8_t gAutoplaySeconds = 10;
+uint32_t gAutoplayTimeout = 0;
 
 // *****************************************
 // Modules
 // *****************************************
+#include "StorageHeader.h"
+
 #include "Palettes.h"
 #include "PatternAround.h"
 
@@ -93,10 +98,10 @@ int16_t gBrightness = BRIGTHNESS_FULL;
 
 #include "PatternDefinition.h"
 
-#include "Storage.h"
-
 #include "FieldTypes.h"
 #include "Fields.h"
+
+#include "Storage.h"
 
 // *****************************************
 // setup
@@ -220,6 +225,8 @@ void setup() {
     MDNS.addService("http", "tcp", 80);
   }
 
+  gAutoplayTimeout = millis() + (gAutoplaySeconds * 1000);
+
   storageLoadSettings();
   
   print_led_status();
@@ -341,6 +348,12 @@ void loop() {
     FastLED.delay(1000 / FRAMES_PER_SECOND);
 
   } else {
+
+    if (gAutoplay == true && (millis() > gAutoplayTimeout)) { 
+      gAutoplayTimeout = millis() + (gAutoplaySeconds * 1000);
+      setPattern(String(getPattern().toInt() + 1));
+    }
+
     g_patterns[gPatternIndex].function();
   }
 }

@@ -4,17 +4,19 @@
   * handle delaypostvalue
   * ~~Fix SolidColor~~
 * ~~EEPROM~~
-  * Reenable
-  * add more variables
+  * ~~Reenable~~
+  * ~~Add more variables~~
+  * Add pattern specific variables
   * Provide clean mechanism (delete Magic value)
 * Wifi
   * Test first connection (Does MDNS work?)
+  * provide clean mechanism
   * ~~MDNS~~
   * Update 
 * Patterns
-  * autoplay
+  * ~~Autoplay~~
   * FRAMES_PER_SECOND
-  * rainbow all around
+  * rainbow all around edge
   * ~~More pattern (twinkle fox, pride)~~
 * Better REST Logging
 * Unify gHostNameString and gHostNameChar
@@ -25,7 +27,7 @@
 * ~~Fix Purple and Green~~
 * palettes and palettesNames in same structure
 * ~~Turn off red led (hardwired)~~
-* add bounds check on SetPattern and SetPalette
+* ~~Add bounds check on SetPattern and SetPalette~~
 
 
 

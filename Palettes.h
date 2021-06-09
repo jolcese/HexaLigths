@@ -181,6 +181,8 @@ String setPalette(String value)
   if (gPaletteIndex >= PALETTE_COUNT)
     gPaletteIndex = PALETTE_COUNT - 1;
 
+  storageWrite(STORAGE_PALETTE, gPaletteIndex);
+
   return String(gPaletteIndex);
 
 }
