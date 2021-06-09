@@ -52,29 +52,16 @@ void WiFiEventHandler(WiFiEvent_t event, system_event_info_t info)
 
 void setupWifiManager() {
 
-  // Do a little work to get a unique-ish name. Get the
-  // last two bytes of the MAC (HEX'd)":
   uint8_t mac[WL_MAC_ADDR_LENGTH];
-  //FIX here//
   WiFi.softAPmacAddress(mac);
-  String macID = String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) +
-                 String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
-  macID.toUpperCase();
-
-  gHostNameString = "HexaLigths-" + macID;
-
-  //char gHostNameChar[gHostNameString.length() + 1];
-  memset(gHostNameChar, 0, gHostNameString.length() + 1);
-
-  for (int i = 0; i < gHostNameString.length(); i++)
-    gHostNameChar[i] = gHostNameString.charAt(i);
+  sprintf(gHostName, "HexaLigths-%02X%02X", mac[WL_MAC_ADDR_LENGTH - 2], mac[WL_MAC_ADDR_LENGTH - 1]);
 
   Serial.println();
   Serial.println("Wifi Manager Setup");
   Serial.println("------------------");
   Serial.printf("MAC address = %02x:%02x:%02x:%02x:%02x:%02x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
   Serial.println();
-  Serial.printf("Name: %s\n", gHostNameChar );
+  Serial.printf("Name: %s\n", gHostName );
   Serial.println();
   
   // reset settings - wipe credentials for testing
@@ -83,7 +70,7 @@ void setupWifiManager() {
 
   //automatically connect using saved credentials if they exist
   //If connection fails it starts an access point with the specified name
-  if(gWifiManager.autoConnect(gHostNameChar)){
+  if(gWifiManager.autoConnect(gHostName)){
     Serial.println("Wi-Fi connected");
     gFirstBoot = false;
   }

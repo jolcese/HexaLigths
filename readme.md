@@ -19,7 +19,7 @@
   * rainbow all around edge
   * ~~More pattern (twinkle fox, pride)~~
 * Better REST Logging
-* Unify gHostNameString and gHostNameChar
+* ~~Unify gHostNameString and gHostNameChar~~
 * Implement websockets and emit
 * ~~Per pattern variables~~
 * Remove SolidColor endpoint

@@ -132,7 +132,7 @@ void setPatternByName(String label)
 // *****************************************
 
 String getName() {
-  return gHostNameString;
+  return String(gHostName);
 }
 
 // *****************************************

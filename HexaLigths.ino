@@ -35,8 +35,7 @@
 
 #include <WiFiManager.h> 
 WiFiManager gWifiManager;
-String gHostNameString;
-char gHostNameChar[64];
+char gHostName[64];
 
 #include <WebServer.h>
 WebServer gWebServer(80);
@@ -218,7 +217,7 @@ void setup() {
   // gWebSocketServer.listen(81);
   // Serial.println("Web Socket server started");
 
-  if(!MDNS.begin(gHostNameChar)) {
+  if(!MDNS.begin(gHostName)) {
       Serial.println("Error starting mDNS!");
   } else {
     Serial.println("MDNS started");
