@@ -5,14 +5,14 @@
   * ~~Implement websockets and emit~~
   * ~~Fix SolidColor~~
 * EEPROM
-  * Provide clean mechanism (delete Magic value)
+  * ~~Provide clean mechanism (delete Magic value)~~
   * ~~Add pattern specific variables~~
   * ~~Reenable~~
   * ~~Add more variables~~
 * Wifi
   * Test first connection (Does MDNS work?)
-  * Provide credentials cleanup mechanism
   * Update firmware OTA
+  * ~~Provide credentials cleanup mechanism~~
   * ~~MDNS~~
 * Patterns
   * FRAMES_PER_SECOND

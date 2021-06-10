@@ -95,7 +95,7 @@ uint8_t coolLikeIncandescent = 1;
 
 // CRGBPalette16 twinkleFoxPalette = Holly_p;
 //palettes[gPaletteIndex]
-uint8_t gTwinkleFoxPaletteIndex = 0; 
+uint8_t gTwinkleFoxPaletteIndex = 14; 
 
 
 // This function is like 'triwave8', which produces a

@@ -4,9 +4,9 @@
 
 uint8_t gColorPaletteDelay = 30; 
 boolean gColorPaletteCycle = true;
-boolean gColorPaletteIdenticalTiles = true;
+boolean gColorPaletteIdenticalTiles = false;
 TBlendType gColorPaletteBlending = LINEARBLEND; 
-uint8_t gColorPalettePaletteIndex = 0; 
+uint8_t gColorPalettePaletteIndex = 3; 
 
 void fColorPalette()
 {

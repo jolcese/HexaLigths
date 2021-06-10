@@ -42,3 +42,80 @@ void print_led_status() {
   Serial.println(FastLED.getFPS());
   Serial.println();
 }
+
+void consoleLoop() {
+    while (Serial.available() > 0) { 
+
+    int incomingByte = Serial.read();
+    if (incomingByte != 10) Serial.println(char(incomingByte));
+    
+    switch (incomingByte) {
+      // Print help
+      case 'H':
+      case 'h':
+        print_help();
+        break;
+
+      // Show status
+      case 'C':
+      case 'c':
+        print_led_status();
+        break;
+
+      // Previous pattern
+      case 'Z':
+      case 'z':
+        if (gPatternIndex == 0) {
+          gPatternIndex = PATTERNS_TOTAL - 1;
+        } else {
+          gPatternIndex--;        
+        }
+        Serial.print(gPatternIndex);
+        Serial.print(" - ");
+        Serial.println(g_patterns[gPatternIndex].name);
+        break;
+
+      // Next pattern
+      case 'X':
+      case 'x':
+        if (gPatternIndex == PATTERNS_TOTAL - 1) {
+          gPatternIndex = 0;
+        } else {
+          gPatternIndex++;  
+        }
+        Serial.print(gPatternIndex);
+        Serial.print(" - ");
+        Serial.println(g_patterns[gPatternIndex].name);
+        break;
+
+      // Decrease Brigthness
+      case 'A':
+      case 'a':
+        gBrightness = FastLED.getBrightness() * (1 - BRIGHTNESS_STEP);
+        if (gBrightness < 0) gBrightness = 0;
+        Serial.print("Brightness = ");
+        Serial.println(gBrightness);
+        FastLED.setBrightness( (uint8_t) gBrightness );
+        break;
+
+      // Increase Brightness
+      case 'S':
+      case 's':
+        if ((uint8_t)gBrightness == (uint8_t)(FastLED.getBrightness() * (1 + BRIGHTNESS_STEP))) {
+          gBrightness++;
+        } else {
+          gBrightness = FastLED.getBrightness() * (1 + BRIGHTNESS_STEP);          
+        }
+        if (gBrightness > BRIGTHNESS_FULL) gBrightness = BRIGTHNESS_FULL;
+        Serial.print("Brightness = ");
+        Serial.println(gBrightness);
+        FastLED.setBrightness( (uint8_t) gBrightness );
+        break;
+
+    }
+    if (incomingByte != 10) {
+      Serial.print("> ");
+    }
+  }
+}
+

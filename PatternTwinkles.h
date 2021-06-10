@@ -6,7 +6,7 @@ uint8_t gTwinklesDelay = 30;
 uint8_t gTwinklesDensity = 255; 
 uint8_t gTwinklesFadeIn = 32; 
 uint8_t gTwinklesFadeOut = 20; 
-uint8_t gTwinklesPaletteIndex = 0; 
+uint8_t gTwinklesPaletteIndex = 15; 
 
 #define STARTING_BRIGHTNESS 64
 // #define FADE_IN_SPEED       32

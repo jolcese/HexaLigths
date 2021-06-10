@@ -35,7 +35,7 @@
           <li><a href="/">HexaLigths <span class="sr-only">(current)</span></a></li>
           <li><a href="/simple.htm" title="Simple Mode">Simple</a></li>
           <li><a href="/edit.htm" target="_blank" title="Edit Files">Files</a></li>
-          <li class="active"><a href="/wifi.htm" title="Wifi">Files</a></li>
+          <li class="active"><a href="/management.htm" title="Management">Management</a></li>
           <li><a href="/update" target="_blank" title="Update Firmware">Firmware</a></li>
           <li>
             <button id="btnScrollToBottom" type="button" class="btn btn-default navbar-btn btn-sm" aria-label="Scroll to bottom" title="Scroll to bottom">
@@ -56,17 +56,20 @@
   </nav>
 
   <div id="container" class="container">
-
-    <form class="form-horizontal" id="form" action="/wifi" method="post">
+    <form class="form-horizontal" id="form">
 
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-          <button type="submit" class="btn btn-default">Reset Wifi</button>
+          <button type="button" class="btn btn-default" id="btnResetWifi">Reset Wifi</button>
         </div>
       </div>
 
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="button" class="btn btn-default" id="btnResetEEPROM">Reset EEPROM</button>
+        </div>
+      </div>
     </form>
-
   </div>
 
   <!-- request js from internet CDN -->
@@ -78,6 +81,7 @@
   <!-- request js from the ESP8266 web server -->
   <script src="js/jquery-3.1.1.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
+  <script src="js/management.js"></script>
 
 </body>
 

@@ -15,7 +15,7 @@ void fWholeTile()
     }
   }
 
-  if (gWholeTileCycle) gWholeTileHue++;
+  if (gWholeTileCycle) gWholeTileHue--;
 
   FastLED.delay(gWholeTileDelay);
 

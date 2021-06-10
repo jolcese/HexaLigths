@@ -2,8 +2,8 @@
 // Demo Reel Confetti
 // *****************************************
 
-boolean gConfettiCycle = true;
-uint8_t gConfettiHue = 0; 
+boolean gConfettiCycle = false;
+uint8_t gConfettiHue = 170; 
 uint8_t gConfettiNumberDots = 3; 
 uint8_t gConfettiDelay = 50; 
 
