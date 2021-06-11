@@ -75,7 +75,7 @@ uint32_t gAutoplayTimeout = 0;
 // *****************************************
 // Modules
 // *****************************************
-#include "WifiManagerHelper.h"
+#include "NetworkHeader.h"
 #include "StorageHeader.h"
 
 #include "Palettes.h"
@@ -102,38 +102,12 @@ uint32_t gAutoplayTimeout = 0;
 
 #include "ConsoleHelper.h"
 #include "Storage.h"
+#include "Network.h"
 
 // *****************************************
 // setup
 // *****************************************
 
-void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
-
-  // THIS IS UNUSED
-  // WEB->ESP32 is REST
-  // ESP32->WEB is WS
-  switch(type) {
-
-    case WStype_DISCONNECTED:
-      Serial.printf("[%u] Disconnected!\n", num);
-      break;
-
-    case WStype_CONNECTED:
-      {
-        IPAddress ip = gWebSocketsServer.remoteIP(num);
-        Serial.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0], ip[1], ip[2], ip[3], payload);
-      }
-      break;
-    case WStype_TEXT:
-    case WStype_BIN:
-		case WStype_ERROR:			
-		case WStype_FRAGMENT_TEXT_START:
-		case WStype_FRAGMENT_BIN_START:
-		case WStype_FRAGMENT:
-		case WStype_FRAGMENT_FIN:
-		  break;
-  }
-}
 
 void setup() {
   //FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(0xFFD0F0);
@@ -156,110 +130,7 @@ void setup() {
   printSpiffsContents();
   setupWifiManager();
 
-  // *****************************************
-  // File Browse/Edit
-  // *****************************************
-
-  //list directory
-  gWebServer.on("/status", HTTP_GET, []() {
-    Serial.println("/status(GET)");
-    fsBrowserHandleStatus();
-  });
-  //list directory
-  gWebServer.on("/list", HTTP_GET, []() {
-    Serial.println("/list(GET)");
-    fsBrowserHandleFileList();
-  });
-  //load editor
-  gWebServer.on("/edit", HTTP_GET, []() {
-    Serial.println("/edit(GET)");
-    if (!fsBrowserHandleFileRead("/edit.htm")) gWebServer.send(404, "text/plain", "FileNotFound");
-  });
-  //create file
-  gWebServer.on("/edit", HTTP_PUT, []() {
-    Serial.println("/edit(PUT)");
-    fsBrowserHandleFileCreate();
-  });
-  //delete file
-  gWebServer.on("/edit", HTTP_DELETE, []() {
-    Serial.println("/edit(DELETE)");
-    fsBrowserHandleFileDelete();
-  });
-  //first callback is called after the request has ended with all parsed arguments
-  //second callback handles file uploads at that location
-  gWebServer.on("/edit", HTTP_POST, []() {
-    Serial.println("/edit(POST)");
-    gWebServer.sendHeader("Access-Control-Allow-Origin", "*");
-    gWebServer.send(200, "text/plain", "");
-  }, fsBrowserHandleFileUpload);
-
-  // *****************************************
-  // Static Serve / REST endpoints
-  // *****************************************
-
-  gWebServer.on("/all", HTTP_GET, []() {
-    Serial.println("/all(GET)");
-    String json = getFieldsJson(fields, FIELD_COUNT);
-    gWebServer.sendHeader("Access-Control-Allow-Origin", "*");
-    gWebServer.send(200, "application/json", json);
-  });
-
-  gWebServer.on("/patternByName", HTTP_POST, []() {
-    Serial.println("/patternByName(POST)");
-    String value = gWebServer.arg("value");
-    setPatternByName(value);
-    gWebServer.sendHeader("Access-Control-Allow-Origin", "*");
-    gWebServer.send(200, "text/plain", String(gPatternIndex));
-  });
-
-  gWebServer.on("/fieldValue", HTTP_POST, []() {
-    Serial.println("/fieldValue(POST)");
-    String name = gWebServer.arg("name");
-    String value = gWebServer.arg("value");
-    String newValue = setFieldValue(name, value, fields, FIELD_COUNT);
-    gWebServer.sendHeader("Access-Control-Allow-Origin", "*");
-    gWebServer.send(200, "text/json", newValue);
-  });
-
-  gWebServer.on("/configure", HTTP_POST, []() {
-    Serial.println("/configure(POST)");
-    String service = gWebServer.arg("name");
-    String action = gWebServer.arg("value");
-
-    if (service == "wifi" and action == "reset") {
-      gWebServer.sendHeader("Access-Control-Allow-Origin", "*");
-      gWebServer.send(200, "text/plain", "");
-      delay(500);
-      gWifiManager.resetSettings();
-      ESP.restart();
-    }
-    if (service == "eeprom" and action == "reset") {
-      EEPROM.write(0, ~STORAGE_MAGICAL);
-      EEPROM.commit();
-      gWebServer.sendHeader("Access-Control-Allow-Origin", "*");
-      gWebServer.send(200, "text/plain", "");
-      delay(500);
-      ESP.restart();
-    }
-    gWebServer.sendHeader("Access-Control-Allow-Origin", "*");
-    gWebServer.send(404, "text/plain", "");
-  });
-
-  gWebServer.serveStatic("/", SPIFFS, "/", "max-age=86400");
-
-  gWebServer.on("/patterns/solidColor", HTTP_POST, []() {
-    Serial.println("/patterns/solidColor(POST)");
-
-    setSolidRed(gWebServer.arg("r"));
-    setSolidGreen(gWebServer.arg("g"));
-    setSolidBlue(gWebServer.arg("b"));
-    setPatternByName("Solid");
-
-    print_led_status();
-
-    gWebServer.send(200, "text/plain", gWebServer.arg("r") + "," + gWebServer.arg("g") + "," + gWebServer.arg("b"));
-    gWebServer.sendHeader("Access-Control-Allow-Origin", "*");
-  });
+  setupRESTEndpoints();
 
   gWebServer.begin();
   Serial.println("HTTP web server started");
@@ -290,7 +161,7 @@ void setup() {
 void loop() {
 
   consoleLoop();
-    
+
   while (WiFi.status() != WL_CONNECTED && gFirstBoot == false )
   {
     Serial.println("Reconnect Wifi!");

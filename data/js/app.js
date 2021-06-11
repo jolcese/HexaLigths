@@ -1,32 +1,13 @@
-// used when hosting the site on the ESP8266
 var address = location.hostname;
 var urlBase = "";
-
-// used when hosting the site somewhere other than the ESP8266 (handy for testing without waiting forever to upload to SPIFFS)
-// var address = "192.168.30.34";
-// var urlBase = "http://" + address + "/";
 
 var postColorTimer = {};
 var postValueTimer = {};
 
 var ignoreColorChange = false;
 
-var ws = new ReconnectingWebSocket("ws://" + address + ":81/", ["arduino"]);
-ws.debug = true;
-
-ws.onmessage = function(evt) {
-  if (evt.data != null)
-  {
-    var data = JSON.parse(evt.data);
-    if(data == null) return;
-    updateFieldValue(data.name, data.value);
-    if (data.name == 'pattern') {
-      $("#form").empty();
-      setActivePattern(data.value);
-      showFields(data.value);
-    }
-  }
-}
+var ws;
+// ws.debug = true;
 
 var allData = {};
 
@@ -119,27 +100,56 @@ $(document).ready(function() {
   //   $("#textareaFields").val(JSON.stringify(json, null, 2));
   // }
 
+  $.get(urlBase + "remote.json", function(data) {
+    $("#status").html("Getting, endpoint...");
+
+    remote = data;
+    if (remote.ip != undefined)
+    address = remote.ip;
+    urlBase = "http://" + address + "/";
+
+    setupConnection();
+  })
+  .fail(function(errorThrown) {
+    setupConnection();
+  });
+});      
+
+function setupConnection() {
+  ws = new ReconnectingWebSocket("ws://" + address + ":81/", ["arduino"]);
+
+  ws.onmessage = function(evt) {
+    if (evt.data != null)
+    {
+      var data = JSON.parse(evt.data);
+      if(data == null) return;
+      updateFieldValue(data.name, data.value);
+      if (data.name == 'pattern') {
+        $("#form").empty();
+        setActivePattern(data.value);
+        showFields(data.value);
+      }
+    }
+  }
+
   $.get(urlBase + "all", function(data) {
-      $("#status").html("Loading, please wait...");
+    $("#status").html("Loading, please wait...");
 
-      allData = data;
+    allData = data;
 
-      showFields(undefined);
+    showFields(undefined);
 
-      $(".minicolors").minicolors({
-        theme: "bootstrap",
-        changeDelay: 200,
-        control: "wheel",
-        format: "rgb",
-        inline: true
-      });
-
-      $("#status").html("Ready");
-    })
-    .fail(function(errorThrown) {
-      console.log(errorThrown);
+    $(".minicolors").minicolors({
+      theme: "bootstrap",
+      changeDelay: 200,
+      control: "wheel",
+      format: "rgb",
+      inline: true
     });
-});
+
+    $("#status").html("Ready");
+  });
+}
 
 function showFields(patternIndex) {
 

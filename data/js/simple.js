@@ -1,46 +1,77 @@
-// used when hosting the site on the ESP8266
 var address = location.hostname;
 var urlBase = "";
-
-// used when hosting the site somewhere other than the ESP8266 (handy for testing without waiting forever to upload to SPIFFS)
-// var address = "192.168.30.34";
-// var urlBase = "http://" + address + "/";
 
 var postColorTimer = {};
 var postValueTimer = {};
 
 var ignoreColorChange = false;
 
-var ws = new ReconnectingWebSocket('ws://' + address + ':81/', ['arduino']);
-ws.debug = true;
-
-ws.onmessage = function(evt) {
-  if(evt.data != null)
-  {
-    var data = JSON.parse(evt.data);
-    if(data == null) return;
-    switch(data.name) {
-      case "power":
-        if(data.value == 1) {
-          $("#btnOn").attr("class", "btn btn-primary");
-          $("#btnOff").attr("class", "btn btn-default");
-        } else {
-          $("#btnOff").attr("class", "btn btn-primary");
-          $("#btnOn").attr("class", "btn btn-default");
-        }
-        break;
-
-      case "pattern":
-        $(".grid-item-pattern").attr("class", "grid-item-pattern btn btn-default");
-        $("#pattern-button-" + data.value).attr("class", "grid-item-pattern btn btn-primary");
-        break;
-    }
-  }
-}
+var ws;
+// ws.debug = true;
 
 $(document).ready(function() {
   $("#status").html("Connecting, please wait...");
 
+  $.get(urlBase + "remote.json", function(data) {
+    $("#status").html("Getting, endpoint...");
+
+    remote = data;
+    if (remote.ip != undefined)
+    address = remote.ip;
+    urlBase = "http://" + address + "/";
+    setupConnection();
+
+  })
+  .fail(function(errorThrown) {
+    setupConnection();
+  });
+
+
+  $("#btnOn").click(function() {
+    postValue("power", 1);
+    $("#btnOn").attr("class", "btn btn-primary");
+    $("#btnOff").attr("class", "btn btn-default");
+  });
+
+  $("#btnOff").click(function() {
+    postValue("power", 0);
+    $("#btnOff").attr("class", "btn btn-primary");
+    $("#btnOn").attr("class", "btn btn-default");
+  });
+
+  addColorButtons();
+
+  $("#status").html("Ready");
+});
+
+function setupConnection() {
+
+  ws = new ReconnectingWebSocket("ws://" + address + ":81/", ["arduino"]);
+
+  ws.onmessage = function(evt) {
+    if(evt.data != null)
+    {
+      var data = JSON.parse(evt.data);
+      if(data == null) return;
+      switch(data.name) {
+        case "power":
+          if(data.value == 1) {
+            $("#btnOn").attr("class", "btn btn-primary");
+            $("#btnOff").attr("class", "btn btn-default");
+          } else {
+            $("#btnOff").attr("class", "btn btn-primary");
+            $("#btnOn").attr("class", "btn btn-default");
+          }
+          break;
+  
+        case "pattern":
+          $(".grid-item-pattern").attr("class", "grid-item-pattern btn btn-default");
+          $("#pattern-button-" + data.value).attr("class", "grid-item-pattern btn btn-primary");
+          break;
+      }
+    }
+  }
+  
   $.get(urlBase + "all", function(data) {
     $("#status").html("Loading, please wait...");
 
@@ -60,24 +91,7 @@ $(document).ready(function() {
       }
     });
   });
-
-  $("#btnOn").click(function() {
-    postValue("power", 1);
-    $("#btnOn").attr("class", "btn btn-primary");
-    $("#btnOff").attr("class", "btn btn-default");
-  });
-
-  $("#btnOff").click(function() {
-    postValue("power", 0);
-    $("#btnOff").attr("class", "btn btn-primary");
-    $("#btnOn").attr("class", "btn btn-default");
-  });
-
-  addColorButtons();
-
-  $("#status").html("Ready");
-});
-
+}
 function addColorButtons() {
   var hues = 25;
   var hueStep = 360 / hues;

@@ -24,8 +24,8 @@ String setPower(String value) {
   gPowerLed = value.toInt();
   if (gPowerLed < 0) gPowerLed = 0;
   if (gPowerLed > 1) gPowerLed = 1;
-  storageWrite("brightness");
-  broadcastInt("brightness", gPowerLed);
+  storageWrite("power");
+  broadcastInt("power", gPowerLed);
   return String(gPowerLed);
 }
 
@@ -43,7 +43,7 @@ String setBrightness(String value) {
   if (gBrightness > 255) gBrightness = 255;
   FastLED.setBrightness( gBrightness );
   storageWrite("brightness");
-  broadcastInt("brightness", gAutoplaySeconds);
+  broadcastInt("brightness", gBrightness);
   return String(gBrightness);
 }
 
@@ -59,7 +59,7 @@ String setAutoplay(String value) {
   if (gAutoplay < 0) gAutoplay = 0;
   if (gAutoplay > 1) gAutoplay = 1;
   storageWrite("autoplay");
-  broadcastInt("autoplay", gAutoplaySeconds);
+  broadcastInt("autoplay", gAutoplay);
   return String(gAutoplay);
 }
 
