@@ -9,7 +9,6 @@ uint8_t gSinelonDelay = 8;
 
 void fSinelon()
 {
-
   // a colored dot sweeping back and forth, with fading trails
   fadeToBlackBy( gLeds, NUM_LEDS, 20);
   int pos = beatsin16( 13, 0, NUM_LEDS-1 );

@@ -17,6 +17,14 @@
 # Notes
 * For local HTML/JS development, you can start a webserver on the data directory (i.e. `python3 -m http.server`) and create a `remote.json` file with these contents: `{"ip":"192.168.30.15"}` 
 
+# Build new pattern
+* Add PatternXXX.h
+  * Implement void fXXX()
+  * Implement String setXXXDelay(String value) and String getXXXDelay()
+* Add definitioon on Fileds.h
+* Add include in HexaLigths.ino
+* Add function in PatternDefinition.h
+
 # To Do
 * HTML 
   * Handle delaypostvalue
@@ -35,7 +43,7 @@
   * ~~MDNS~~
 * Patterns
   * FRAMES_PER_SECOND
-  * rainbow all around edge
+  * ~~rainbow all around edge~~
   * ~~Add independent palette to different patterns~~
   * ~~More pattern (twinkle fox, pride)~~
   * ~~Autoplay~~

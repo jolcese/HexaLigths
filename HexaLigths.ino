@@ -50,6 +50,7 @@ WebSocketsServer gWebSocketsServer = WebSocketsServer(81);
 #include "fsBrowser.h"
 
 #include <ESPmDNS.h>
+// #include <Update.h>
 
 boolean gFirstBoot = true;
 
@@ -71,6 +72,7 @@ int16_t gBrightness = BRIGTHNESS_FULL;
 boolean gAutoplay = false;
 uint8_t gAutoplaySeconds = 10;
 uint32_t gAutoplayTimeout = 0;
+boolean gPatternSwitch = true;
 
 // *****************************************
 // Modules
@@ -80,7 +82,6 @@ uint32_t gAutoplayTimeout = 0;
 
 #include "Palettes.h"
 #include "PatternAround.h"
-// #include "PatternRainbow.h"
 #include "PatternColorPalette.h"
 #include "PatternCylon.h"
 #include "PatternDemoReel.h"
@@ -94,6 +95,8 @@ uint32_t gAutoplayTimeout = 0;
 #include "PatternWholeTile.h"
 #include "PatternTwinkles.h"
 #include "PatternTwinkleFox.h"
+#include "PatternTwinkleJO.h"
+#include "PatternPaletteEdge.h"
 
 #include "PatternDefinition.h"
 
@@ -187,6 +190,11 @@ void loop() {
       setPattern(String(getPattern().toInt() + 1));
     }
 
+    // Turn off all LEDS when switching pattern
+    if (gPatternSwitch == true) {
+      gPatternSwitch = false;
+      fill_solid(gLeds, NUM_LEDS, CRGB::Black);
+    }
     g_patterns[gPatternIndex].function();
   }
 }

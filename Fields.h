@@ -88,6 +88,8 @@ String getAutoplaySeconds() {
 String setPattern(String value)
 {
   gPatternIndex = value.toInt();;
+  gPatternSwitch = true;
+
   if (gPatternIndex >= PATTERNS_TOTAL) {
     gPatternIndex = 0;
   }
@@ -219,6 +221,20 @@ FieldList fields = {
     {"twinkleFoxDensity", "Density", NumberFieldType, 0, 8, getTwinkleFoxDensity, NULL, setTwinkleFoxDensity, "twinkleFox", 122},
     {"twinkleFoxPalette", "Palette", SelectFieldType, 0, PALETTE_COUNT, getTwinkleFoxPalette, getPalettes, setTwinkleFoxPalette, "twinkleFox", 123},
     {"twinkleFoxAutoBack", "Autoselect background", BooleanFieldType, 0, 1, getTwinkleFoxAutoBackground, NULL, setTwinkleFoxAutoBackground, "twinkleFox", 124},
+
+    {"twinkleJOSection", "Twinkle Parameters", SectionFieldType, NULL, NULL, NULL, NULL, NULL, "twinkleJO", 255},
+    {"twinkleJODelay", "Delay", NumberFieldType, 1, 255, getTwinkleJODelay, NULL, setTwinkleJODelay, "twinkleJO", 131},
+    {"twinkleJOFadeIn", "Fade In Speed", NumberFieldType, 0, 255, getTwinkleJOFadeIn, NULL, setTwinkleJOFadeIn, "twinkleJO", 132},
+    {"twinkleJOFadeOut", "Fade Out Speed", NumberFieldType, 0, 255, getTwinkleJOFadeOut, NULL, setTwinkleJOFadeOut, "twinkleJO", 133},
+    {"twinkleJODotsPerCycle", "New Dots Per Cycle", NumberFieldType, 1, 64, getTwinkleJODotsPerCycle, NULL, setTwinkleJODotsPerCycle, "twinkleJO", 134},
+    {"twinkleJOSpread", "Color Spread", NumberFieldType, 1, 255, getTwinkleJOSpread, NULL, setTwinkleJOSpread, "twinkleJO", 135},
+    {"twinkleJOStartBrightness", "Start Brightness", NumberFieldType, 1, 255, getTwinkleJOStartBrightness, NULL, setTwinkleJOStartBrightness, "twinkleJO", 136},
+    {"twinkleJOBaseHue", "Hue", NumberFieldType, 0, 255, getTwinkleJOBaseHue, NULL, setTwinkleJOBaseHue, "twinkleJO", 137},
+
+    {"paletteEdgeSection", "Palette Edge Parameters", SectionFieldType, NULL, NULL, NULL, NULL, NULL, "paletteEdge", 255},
+    {"paletteEdgeDelay", "Delay", NumberFieldType, 1, 255, getPaletteEdgeDelay, NULL, setPaletteEdgeDelay, "paletteEdge", 141},
+    {"paletteEdgeCycle", "Cycle Colors", BooleanFieldType, 0, 1, getPaletteEdgeCycle, NULL, setPaletteEdgeCycle, "paletteEdge", 142},
+    {"paletteEdgePalette", "Palette", SelectFieldType, 0, PALETTE_COUNT, getPaletteEdgePalette, getPalettes, setPaletteEdgePalette, "paletteEdge", 143},
 };
 
 const uint8_t FIELD_COUNT = (sizeof(fields) / sizeof((fields)[0]));

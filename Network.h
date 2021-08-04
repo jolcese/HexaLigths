@@ -222,5 +222,30 @@ void setupRESTEndpoints() {
     gWebServer.send(200, "text/plain", gWebServer.arg("r") + "," + gWebServer.arg("g") + "," + gWebServer.arg("b"));
     gWebServer.sendHeader("Access-Control-Allow-Origin", "*");
   });
+
+  // gWebServer.on("/updateFirnmware", HTTP_POST, []() {
+  //   gWebServer.sendHeader("Connection", "close");
+  //   gWebServer.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
+  //   ESP.restart();
+  // }, []() {
+  //   HTTPUpload& upload = gWebServer.upload();
+  //   if (upload.status == UPLOAD_FILE_START) {
+  //     Serial.printf("Update: %s\n", upload.filename.c_str());
+  //     if (!Update.begin(UPDATE_SIZE_UNKNOWN)) { //start with max available size
+  //       Update.printError(Serial);
+  //     }
+  //   } else if (upload.status == UPLOAD_FILE_WRITE) {
+  //     /* flashing firmware to ESP*/
+  //     if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
+  //       Update.printError(Serial);
+  //     }
+  //   } else if (upload.status == UPLOAD_FILE_END) {
+  //     if (Update.end(true)) { //true to set the size to the current progress
+  //       Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
+  //     } else {
+  //       Update.printError(Serial);
+  //     }
+  //   }
+  // });
 }
 

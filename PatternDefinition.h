@@ -18,6 +18,7 @@ PatternStructureList g_patterns = {
   { "demoReel",       "Reel",                    &fDemoReel },
   { "confetti",       "Confetti",                &fConfetti },
   { "sinelon",        "Sinelon",                 &fSinelon },
+  { "paletteEdge",    "Palette Edge",            &fPaletteEdge },
   { "juggle",         "Juggle",                  &fJuggle },
   { "bpm",            "BPM",                     &fBPM },
   { "cylon",          "Cylon",                   &fCylon },
@@ -25,7 +26,8 @@ PatternStructureList g_patterns = {
   { "solidEffects",   "Solid Effects",           &fSolidEffects },
   { "wholeTile",      "Whole Tile Palette",      &fWholeTile },
   { "twinkles",       "Twinkles",                &fTwinkles },
-  { "twinkleFox",     "Twinkle Fox",             &fTwinkleFox }
+  { "twinkleFox",     "Twinkle Fox",             &fTwinkleFox },
+  { "twinkleJO",      "Twinkle JO",              &fTwinkleJO }
 };
 
 const uint8_t PATTERNS_TOTAL = (sizeof(g_patterns) / sizeof((g_patterns)[0]));
