@@ -50,7 +50,7 @@ WebSocketsServer gWebSocketsServer = WebSocketsServer(81);
 #include "fsBrowser.h"
 
 #include <ESPmDNS.h>
-// #include <Update.h>
+#include <Update.h>
 
 boolean gFirstBoot = true;
 

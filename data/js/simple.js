@@ -19,13 +19,14 @@ $(document).ready(function() {
     if (remote.ip != undefined)
     address = remote.ip;
     urlBase = "http://" + address + "/";
+    $("#status").html("Endpoint: " + urlBase);
     setupConnection();
 
   })
   .fail(function(errorThrown) {
+    $("#status").html("Endpoint: local");
     setupConnection();
   });
-
 
   $("#btnOn").click(function() {
     postValue("power", 1);

@@ -107,13 +107,14 @@ $(document).ready(function() {
     if (remote.ip != undefined)
     address = remote.ip;
     urlBase = "http://" + address + "/";
-
+    $("#status").html("Endpoint: " + urlBase);
     setupConnection();
+
   })
   .fail(function(errorThrown) {
+    $("#status").html("Endpoint: local");
     setupConnection();
   });
-});      
 
 function setupConnection() {
   ws = new ReconnectingWebSocket("ws://" + address + ":81/", ["arduino"]);

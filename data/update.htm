@@ -35,8 +35,8 @@
           <li><a href="/">HexaLigths <span class="sr-only">(current)</span></a></li>
           <li><a href="/simple.htm" title="Simple Mode">Simple</a></li>
           <li><a href="/edit.htm" target="_blank" title="Edit Files">Files</a></li>
-          <li class="active"><a href="/management.htm" title="Management">Management</a></li>
-          <li><a href="/update.htm" title="Update Firmware">Firmware</a></li>
+          <li><a href="/management.htm" title="Management">Management</a></li>
+          <li class="active"><a href="/update.htm" title="Update Firmware">Firmware</a></li>
           <li>
             <button id="btnScrollToBottom" type="button" class="btn btn-default navbar-btn btn-sm" aria-label="Scroll to bottom" title="Scroll to bottom">
               <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
@@ -56,21 +56,46 @@
   </nav>
 
   <div id="container" class="container">
-    <form class="form-horizontal" id="form">
-
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-          <button type="button" class="btn btn-default" id="btnResetWifi">Reset Wifi</button>
-        </div>
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <form method='POST' action='#' enctype='multipart/form-data' id='upload_form'>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <input type='file' class="btn btn-default" name='update'>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <input type='submit' class="btn btn-default" value='Update'>
+            </div>
+          </div>
+        </form>
       </div>
-
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-          <button type="button" class="btn btn-default" id="btnResetEEPROM">Reset EEPROM</button>
-        </div>
-      </div>
-    </form>
+    </div>
   </div>
+
+  <nav class="navbar navbar-default navbar-fixed-bottom">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-2" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="navbar-collapse-2">
+        <ul class="nav navbar-nav">
+          <li>
+            <a href="/" aria-label="Refresh" title="Refresh">
+              <span class="glyphicon glyphicon-refresh" id="btnRefresh"></span>
+            </a>
+          </li>
+          <li><p class="navbar-text" id="status">Loading, please wait...</p></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
   <!-- request js from internet CDN -->
   <!-- <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script> -->
@@ -81,7 +106,7 @@
   <!-- request js from the ESP8266 web server -->
   <script src="js/jquery-3.1.1.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
-  <script src="js/management.js"></script>
+  <script src="js/update.js"></script>
 
 </body>
 

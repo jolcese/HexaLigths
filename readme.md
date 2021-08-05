@@ -17,13 +17,13 @@
 # Notes
 * For local HTML/JS development, you can start a webserver on the data directory (i.e. `python3 -m http.server`) and create a `remote.json` file with these contents: `{"ip":"192.168.30.15"}` 
 
-# Build new pattern
+# How to build a new pattern
 * Add PatternXXX.h
   * Implement void fXXX()
   * Implement String setXXXDelay(String value) and String getXXXDelay()
-* Add definitioon on Fileds.h
-* Add include in HexaLigths.ino
+* Add definition on Fields.h
 * Add function in PatternDefinition.h
+* Add include in HexaLigths.ino
 
 # To Do
 * HTML 
@@ -38,7 +38,8 @@
   * ~~Add more variables~~
 * Wifi
   * Test first connection (Does MDNS work?)
-  * Update firmware OTA
+  * Update HTML files OTA
+  * ~~Update firmware OTA~~
   * ~~Provide credentials cleanup mechanism~~
   * ~~MDNS~~
 * Patterns

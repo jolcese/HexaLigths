@@ -9,9 +9,11 @@ $(document).ready(function() {
     remote = data;
     if (remote.ip != undefined)
     address = remote.ip;
-    urlBase = "http://" + address + "/";
+    urlBase = "http://" + address + '/';
+    $("#status").html("Endpoint: " + urlBase);
   })
   .fail(function(errorThrown) {
+    $("#status").html("Endpoint: local");
   });
 
   $("#btnResetWifi").click(function() {
