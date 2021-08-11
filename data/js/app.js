@@ -115,6 +115,7 @@ $(document).ready(function() {
     $("#status").html("Endpoint: local");
     setupConnection();
   });
+});
 
 function setupConnection() {
   ws = new ReconnectingWebSocket("ws://" + address + ":81/", ["arduino"]);
